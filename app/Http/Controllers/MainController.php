@@ -48,7 +48,7 @@ class MainController extends Controller
 
         $file = file_get_contents('data/statement.htm');
         $data = json_decode($file);
-        //echo ($file);
+        echo ($file);
 
         $dom = new \DOMDocument();
         $dom->loadHTML($file);
@@ -59,12 +59,25 @@ class MainController extends Controller
 
         $tbody = $dom->getElementsByTagName('tbody')->item(0);
 
+        $label = ['date', 'profit'];
+        $data = [];
+        
+        foreach ($xpath->query('//table/tr', $tbody) as $line => $tr) {
+            if($line >= 7) {
+                $count = 0;
 
-        foreach ($xpath->query('//table/tr', $tbody) as $key => $tr) {
-            if($key === 7) {
-                var_dump($tr->nodeValue);
+                foreach ($xpath->query("td[@class]", $tr) as $key => $td) {
+                    //var_dump($td->nodeValue . "<br/>");
+                    if($key === 2 || $key === 6) {
+                        $data[$line][$label[$count]] = $td->nodeValue;
+                        $count += 1;
+                    }
+
+                }
             }
         }
+
+        dd($data);
 
  
 
