@@ -1,0 +1,8 @@
+thead, tr {
+    border: solid 1px black;
+    text-align: center;
+}
+
+td {
+    border: solid 1px black;
+}

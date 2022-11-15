@@ -29,7 +29,6 @@ class MainController extends Controller
         $file_ftp="statement.htm";
         $chemin_extraction= "data/";
 
-        //echo '<br>' . $chemin_extraction;
         $status = ftp_get($conn_id, $chemin_extraction.$file_ftp,"./htdocs/data/".$file_ftp, FTP_BINARY);
 
         $file = file_get_contents('data/statement.htm');
@@ -52,6 +51,7 @@ class MainController extends Controller
 
                 foreach ($xpath->query("td[@class]", $tr) as $key => $td) {
                     if($key === 2 || $key === 6) {
+
                         $data[$line][$label[$count]] = $td->nodeValue;
                         $count += 1;
                     }
@@ -59,36 +59,49 @@ class MainController extends Controller
             }
         }
 
-        $tradesByDay = [];
+        $tradesByDays = [];
 
         foreach($data as $key => $trade)
         {                
-            $randomNumber = rand(1,60);
 
             if(count($trade) === 2) 
             {
-                $time = substr($trade['date'], 11);
-                $tradesByDay[date("d-m-Y", strtotime(str_replace(".", "/", substr($trade['date'], 0,10))))][date('H:i:s', strtotime($time."+$randomNumber seconds"))] = $trade['profit'];
+                $tradesByDays[date("d-m-Y", strtotime(str_replace(".", "/", substr($trade['date'], 0,10))))]['trades'][substr($trade['date'], 11)][] = $trade['profit'];
+                $date = $trade['date'];
+
             }
         }
 
-        foreach($tradesByDay as $date => $oneDay)
+        foreach($tradesByDays as $date => $oneDay)
         {
             $result = 0;
+            $numberofTrade = 0;
 
-            foreach($oneDay as $tradeValue) 
+            foreach($oneDay as $tradesValue) 
             {
-                $result += $tradeValue;
+                foreach($tradesValue as $trades) {
+                    foreach($trades as $trade) {
+                        $result += $trade;
+                        $numberofTrade += 1;
+                    }                   
+                }
             }
 
-            $tradesByDay[$date]["Profit"] = $result;
-            $tradesByDay[$date]["Commission"] = -(count($oneDay) * 0.10);
-            $tradesByDay[$date]["Profit total"] = $result - (count($oneDay) * 0.10);
+            $commission = -($numberofTrade * 0.10);
 
+            $tradesByDays[$date]["profit"] = $result;
+            $tradesByDays[$date]["commission"] = $commission;
+            $tradesByDays[$date]["profit_total"] = $result + $commission;
 
+            foreach($tradesByDays as $date => $trades) 
+            {
+                if(date('Y', strtotime($date)) !== date('Y')) 
+                {
+                    unset($tradesByDays[$date]);
+                }
+            }
         }
-       dd($tradesByDay);
 
-        return view('index', ['data' => $tradesByDay]);
+        return view('index', ['data' => $tradesByDays]);
     }
 }
