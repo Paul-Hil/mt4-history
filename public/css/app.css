@@ -6,3 +6,10 @@ thead, tr {
 td {
     border: solid 1px black;
 }
+
+tr:nth-child(even) {
+    background: rgb(177, 177, 177)
+}
+tr:nth-child(odd) {
+    background: #FFF
+}

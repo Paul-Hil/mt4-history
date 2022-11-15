@@ -17,8 +17,9 @@ class MainController extends Controller
     public function __invoke(Request $request)
     {
         $serveur_ftp="ftpupload.net";
-        $login_ftp="b7_32978788";
-        $mp_ftp="Spectre2014";
+        $login_ftp=getenv('LOGIN_FTP');;
+        $mp_ftp=getenv('MP_FTP');
+
 
         $conn_id = ftp_connect($serveur_ftp, 21) or die ('Connection impossible<br />');
 
@@ -39,12 +40,12 @@ class MainController extends Controller
         $dom->loadHTML($file);
 
         $xpath = new \DOMXPath($dom);
-        
+
         $tbody = $dom->getElementsByTagName('tbody')->item(0);
 
         $label = ['date', 'profit'];
         $data = [];
-        
+
         foreach ($xpath->query('//table/tr', $tbody) as $line => $tr) {
             if($line >= 7) {
                 $count = 0;
@@ -62,11 +63,14 @@ class MainController extends Controller
         $tradesByDays = [];
 
         foreach($data as $key => $trade)
-        {                
+        {
 
-            if(count($trade) === 2) 
+            if(count($trade) === 2)
             {
-                $tradesByDays[date("d-m-Y", strtotime(str_replace(".", "/", substr($trade['date'], 0,10))))]['trades'][substr($trade['date'], 11)][] = $trade['profit'];
+                $time = strtotime(substr($trade['date'], 11));
+                $timeLessOneH = date("H:i:s", strtotime('-1 hours', $time));
+
+                $tradesByDays[date("d-m-Y", strtotime(str_replace(".", "/", substr($trade['date'], 0,10))))]['trades'][$timeLessOneH][] = $trade['profit'];
                 $date = $trade['date'];
 
             }
@@ -77,13 +81,13 @@ class MainController extends Controller
             $result = 0;
             $numberofTrade = 0;
 
-            foreach($oneDay as $tradesValue) 
+            foreach($oneDay as $tradesValue)
             {
                 foreach($tradesValue as $trades) {
                     foreach($trades as $trade) {
                         $result += $trade;
                         $numberofTrade += 1;
-                    }                   
+                    }
                 }
             }
 
@@ -93,9 +97,9 @@ class MainController extends Controller
             $tradesByDays[$date]["commission"] = $commission;
             $tradesByDays[$date]["profit_total"] = $result + $commission;
 
-            foreach($tradesByDays as $date => $trades) 
+            foreach($tradesByDays as $date => $trades)
             {
-                if(date('Y', strtotime($date)) !== date('Y')) 
+                if(date('Y', strtotime($date)) !== date('Y'))
                 {
                     unset($tradesByDays[$date]);
                 }

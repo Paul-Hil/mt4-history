@@ -10,7 +10,7 @@
 
 </head>
 <body>
-    <div class="accordion" style="width:100%;margin:auto" id="accordionExample"> 
+    <div class="accordion" style="width:100%;margin:auto" id="accordionExample">
 
         @foreach($data as $date => $tradesByDay)
         <div class="accordion-item">
@@ -75,7 +75,7 @@
             </div>
         </div>
 
-           
+
 
         @endforeach
     </div>
