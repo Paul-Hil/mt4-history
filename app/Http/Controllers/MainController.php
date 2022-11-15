@@ -24,14 +24,6 @@ class MainController extends Controller
 
         $login_result = ftp_login($conn_id, $login_ftp, $mp_ftp) or die ('identifiants impossible<br />');
 
-        // Vérification de la connexion
-        if ((!$conn_id) || (!$login_result)) {
-            echo "La connexion FTP a échoué !";
-            exit;
-        } else {
-            echo "Connexion au serveur " .$serveur_ftp. " pour l'utilisateur ".$login_ftp;
-        }
-
         ftp_pasv($conn_id, true);
 
         $file_ftp="statement.htm";
@@ -40,23 +32,15 @@ class MainController extends Controller
         //echo '<br>' . $chemin_extraction;
         $status = ftp_get($conn_id, $chemin_extraction.$file_ftp,"./htdocs/data/".$file_ftp, FTP_BINARY);
 
-        if($status) {
-            echo "<br/>Envoie confirmé<br/>";
-        } else {
-            echo  "Erreur";
-        }
-
         $file = file_get_contents('data/statement.htm');
         $data = json_decode($file);
-        echo ($file);
+        //echo ($file);
 
         $dom = new \DOMDocument();
         $dom->loadHTML($file);
 
         $xpath = new \DOMXPath($dom);
         
-        //dd($xpath);
-
         $tbody = $dom->getElementsByTagName('tbody')->item(0);
 
         $label = ['date', 'profit'];
@@ -67,20 +51,44 @@ class MainController extends Controller
                 $count = 0;
 
                 foreach ($xpath->query("td[@class]", $tr) as $key => $td) {
-                    //var_dump($td->nodeValue . "<br/>");
                     if($key === 2 || $key === 6) {
                         $data[$line][$label[$count]] = $td->nodeValue;
                         $count += 1;
                     }
-
                 }
             }
         }
 
-        dd($data);
+        $tradesByDay = [];
 
- 
+        foreach($data as $key => $trade)
+        {                
+            $randomNumber = rand(1,60);
 
-        return view('index', ['']);
+            if(count($trade) === 2) 
+            {
+                $time = substr($trade['date'], 11);
+                $tradesByDay[date("d-m-Y", strtotime(str_replace(".", "/", substr($trade['date'], 0,10))))][date('H:i:s', strtotime($time."+$randomNumber seconds"))] = $trade['profit'];
+            }
+        }
+
+        foreach($tradesByDay as $date => $oneDay)
+        {
+            $result = 0;
+
+            foreach($oneDay as $tradeValue) 
+            {
+                $result += $tradeValue;
+            }
+
+            $tradesByDay[$date]["Profit"] = $result;
+            $tradesByDay[$date]["Commission"] = -(count($oneDay) * 0.10);
+            $tradesByDay[$date]["Profit total"] = $result - (count($oneDay) * 0.10);
+
+
+        }
+       dd($tradesByDay);
+
+        return view('index', ['data' => $tradesByDay]);
     }
 }
