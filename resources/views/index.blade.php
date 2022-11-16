@@ -10,73 +10,88 @@
 
 </head>
 <body>
-    <div class="accordion" style="width:100%;margin:auto" id="accordionExample"> 
+    <header>
+        <div id="header">
+            <div>
+                {{$data['account']}}
+            </div>
 
-        @foreach($data as $date => $tradesByDay)
-        <div class="accordion-item">
-            <h2 class="accordion-header" id="headingOne">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#date_{{$date}}" aria-expanded="true" aria-controls="collapseOne">
-                        <div style="display:flex;width:80%;justify-content:space-around;">
-                            <div>{{ strftime("%d %B %Y", strtotime($date)); }}</div>
-                            <div>Profit : +{{$tradesByDay['profit']}}€</div>
-                            <div>Commission : {{$tradesByDay['commission']}}0€</div>
-                            <div>Profil total : +{{$tradesByDay['profit_total']}}€</div>
-                        </div>
-                </button>
-            </h2>
-
-            <div id="date_{{$date}}" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-                <div class="accordion-body" style="background-color:azure">
-                    <table style="width:80%;margin:auto;border:solid 1px black;border-radius:20px">
-                        <thead style="border: solid 1px black;">
-                            <tr>
-                                <td>
-                                    Heure
-                                </td>
-
-                                <td>
-                                    Profit
-                                </td>
-
-                                <td>
-                                    Type
-                                </td>
-
-                                <td>
-                                    Effet de levier
-                                </td>
-                            <tr>
-                        </thead>
-                    @foreach($tradesByDay['trades'] as $time => $trades)
-                        @foreach($trades as $trade)
-
-                        <tr>
-                            <td>
-                                {{$time}}
-                            </td>
-
-                            <td>
-                                {{$trade}}€
-                            </td>
-
-                            <td>
-
-                            </td>
-
-                            <td>
-
-                            </td>
-                        </tr>
-                        @endforeach
-                    @endforeach
-
-                    </table>
-                </div>
+            <div>
+                {{$data['time_file_update']}}
             </div>
         </div>
+    </header>
 
-           
+    <div class="accordion" style="width:100%;margin:auto" id="accordionExample">
+        @foreach($data['tradesByDays'] as $date => $tradesByDay)
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingOne">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#date_{{$date}}" aria-expanded="true" aria-controls="collapseOne">
+                            <div class="accordion_tradeDay">
+                                <div>{{ $tradesByDay['date_label'] }}</div>
+                                <div>Profit : +{{$tradesByDay['profit']}}€</div>
+                                <div>Commission : {{$tradesByDay['commission']}}0€</div>
+                                <div>Profil total : +{{$tradesByDay['profit_total']}}€</div>
+                            </div>
+                    </button>
+                </h2>
 
+                <div id="date_{{$date}}" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                    <div class="accordion-body" style="background-color:azure">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <td>
+                                        Heure
+                                    </td>
+
+                                    <td>
+                                        Profit
+                                    </td>
+
+                                    <td>
+                                        Type
+                                    </td>
+
+                                    <td>
+                                        Levier
+                                    </td>
+                                <tr>
+                            </thead>
+
+                        @foreach($tradesByDay['trades'] as $time => $trades)
+                            @foreach($trades as $key => $trade)
+                            <tr>
+                                <td>
+                                    {{$time}}
+                                </td>
+
+                                @if($trade['profit'] > 0)
+                                <td class="profit_positive">
+                                @else
+                                <td class="profit_negative">
+                                @endif
+                                    {{$trade['profit']}}
+                                </td>
+
+                                @if($trade['type'] === "buy")
+                                    <td class='type_buy'>
+                                @else
+                                    <td class='type_sell'>
+                                @endif
+                                    {{$trade['type']}}
+                                </td>
+
+                                <td>
+                                    {{$trade['levier']}}
+                                </td>
+                            </tr>
+                            @endforeach
+                        @endforeach
+                        </table>
+                    </div>
+                </div>
+            </div>
         @endforeach
     </div>
 

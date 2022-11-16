@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Argument;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Carbon\Carbon;
 
 class MainController extends Controller
 {
@@ -17,8 +18,8 @@ class MainController extends Controller
     public function __invoke(Request $request)
     {
         $serveur_ftp="ftpupload.net";
-        $login_ftp="b7_32978788";
-        $mp_ftp="Spectre2014";
+        $login_ftp=getenv('LOGIN_FTP');
+        $mp_ftp=getenv('MP_FTP');
 
         $conn_id = ftp_connect($serveur_ftp, 21) or die ('Connection impossible<br />');
 
@@ -32,43 +33,77 @@ class MainController extends Controller
         $status = ftp_get($conn_id, $chemin_extraction.$file_ftp,"./htdocs/data/".$file_ftp, FTP_BINARY);
 
         $file = file_get_contents('data/statement.htm');
-        $data = json_decode($file);
         //echo ($file);
 
         $dom = new \DOMDocument();
         $dom->loadHTML($file);
 
         $xpath = new \DOMXPath($dom);
-        
+
         $tbody = $dom->getElementsByTagName('tbody')->item(0);
 
-        $label = ['date', 'profit'];
+        $label = ['type', 'levier', 'date', 'profit'];
         $data = [];
-        
+        $dataToView = [];
+
         foreach ($xpath->query('//table/tr', $tbody) as $line => $tr) {
             if($line >= 7) {
                 $count = 0;
 
-                foreach ($xpath->query("td[@class]", $tr) as $key => $td) {
-                    if($key === 2 || $key === 6) {
+                foreach ($xpath->query("td", $tr) as $key => $td) {
+
+                    if($key === 2 || $key === 3 || $key === 8 || $key === 13) {
 
                         $data[$line][$label[$count]] = $td->nodeValue;
                         $count += 1;
                     }
                 }
             }
+
+            if($line === 0) {
+                foreach ($xpath->query("td", $tr) as $key => $td) {
+                    if($key === 0)  {
+                        $account = $td->nodeValue;
+                    }
+
+                    if($key === 4) {
+                        $time_file_update = $td->nodeValue;
+                        
+
+                        $hours = substr($time_file_update, -5);
+                        $time_file_update = Carbon::parse($hours)->locale('fr-FR');
+                        $time_file_update = ucfirst($time_file_update->getTranslatedDayName('dddd')) ." ".  $time_file_update->translatedFormat('d F | ') . $hours;
+                    }
+
+                }
+            }
         }
 
+        $dataToView['account'] = $account;
+        $dataToView['time_file_update'] = $time_file_update;
+
         $tradesByDays = [];
-
+        $count = 0;
+        
         foreach($data as $key => $trade)
-        {                
-
-            if(count($trade) === 2) 
+        {
+            if(count($trade) === 4)
             {
-                $tradesByDays[date("d-m-Y", strtotime(str_replace(".", "/", substr($trade['date'], 0,10))))]['trades'][substr($trade['date'], 11)][] = $trade['profit'];
-                $date = $trade['date'];
+                $date = date("d-m-Y", strtotime(str_replace(".", "/", substr($trade['date'], 0,10))));
 
+                $dateVanished = Carbon::parse($date)->locale('fr-FR');
+                $dateVanished = ucfirst($dateVanished->getTranslatedDayName('dddd')) ." ".  $dateVanished->translatedFormat('d F | Y');
+
+                $tradesByDays[$date]['date_label'] = $dateVanished;
+
+                $time = strtotime(substr($trade['date'], 11));
+                $timeLessOneH = date("H:i:s", strtotime('-1 hours', $time));
+
+                $tradesByDays[$date]['trades'][$timeLessOneH][$count]['profit'] = $trade['profit'];
+                $tradesByDays[$date]['trades'][$timeLessOneH][$count]['levier'] = $trade['levier'];
+                $tradesByDays[$date]['trades'][$timeLessOneH][$count]['type'] = $trade['type'];
+
+                $count += 1;
             }
         }
 
@@ -77,31 +112,33 @@ class MainController extends Controller
             $result = 0;
             $numberofTrade = 0;
 
-            foreach($oneDay as $tradesValue) 
+            foreach($oneDay['trades'] as $tradesValue)
             {
-                foreach($tradesValue as $trades) {
-                    foreach($trades as $trade) {
-                        $result += $trade;
-                        $numberofTrade += 1;
-                    }                   
+                foreach($tradesValue as $trade) 
+                {
+                    $result += floatval($trade['profit']);
+                    $numberofTrade += 1;
                 }
+
             }
 
             $commission = -($numberofTrade * 0.10);
-
-            $tradesByDays[$date]["profit"] = $result;
+            $tradesByDays[$date]["profit"] = floatval($result);
             $tradesByDays[$date]["commission"] = $commission;
             $tradesByDays[$date]["profit_total"] = $result + $commission;
 
-            foreach($tradesByDays as $date => $trades) 
+            foreach($tradesByDays as $date => $trades)
             {
-                if(date('Y', strtotime($date)) !== date('Y')) 
+                if(substr($date, -4) !== date('Y'))
                 {
                     unset($tradesByDays[$date]);
                 }
             }
         }
 
-        return view('index', ['data' => $tradesByDays]);
+
+        $dataToView['tradesByDays'] = $tradesByDays;
+
+        return view('index', ['data' => $dataToView]);
     }
 }
