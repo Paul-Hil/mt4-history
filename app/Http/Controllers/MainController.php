@@ -17,24 +17,10 @@ class MainController extends Controller
      */
     public function __invoke(Request $request)
     {
-        $serveur_ftp="ftpupload.net";
-        $login_ftp=getenv('LOGIN_FTP');
-        $mp_ftp=getenv('MP_FTP');
-
-        $conn_id = ftp_connect($serveur_ftp, 21) or die ('Connection impossible<br />');
-
-        $login_result = ftp_login($conn_id, $login_ftp, $mp_ftp) or die ('identifiants impossible<br />');
-
-        ftp_pasv($conn_id, true);
-
-        $file_ftp="statement.htm";
-        $chemin_extraction= "data/";
-
-        $status = ftp_get($conn_id, $chemin_extraction.$file_ftp,"./htdocs/data/".$file_ftp, FTP_BINARY);
+        $status = MainController::updateFileMT4();
 
         $file = file_get_contents('data/statement.htm');
         //echo ($file);
-
         $dom = new \DOMDocument();
         $dom->loadHTML($file);
 
@@ -44,7 +30,6 @@ class MainController extends Controller
 
         $label = ['type', 'levier', 'date', 'profit'];
         $data = [];
-        $dataToView = [];
 
         foreach ($xpath->query('//table/tr', $tbody) as $line => $tr) {
             if($line >= 7) {
@@ -68,7 +53,7 @@ class MainController extends Controller
 
                     if($key === 4) {
                         $time_file_update = $td->nodeValue;
-                        
+
 
                         $hours = substr($time_file_update, -5);
                         $time_file_update = Carbon::parse($hours)->locale('fr-FR');
@@ -79,12 +64,13 @@ class MainController extends Controller
             }
         }
 
+        $dataToView = [];
         $dataToView['account'] = $account;
         $dataToView['time_file_update'] = $time_file_update;
 
         $tradesByDays = [];
         $count = 0;
-        
+
         foreach($data as $key => $trade)
         {
             if(count($trade) === 4)
@@ -114,7 +100,7 @@ class MainController extends Controller
 
             foreach($oneDay['trades'] as $tradesValue)
             {
-                foreach($tradesValue as $trade) 
+                foreach($tradesValue as $trade)
                 {
                     $result += floatval($trade['profit']);
                     $numberofTrade += 1;
@@ -140,5 +126,25 @@ class MainController extends Controller
         $dataToView['tradesByDays'] = $tradesByDays;
 
         return view('index', ['data' => $dataToView]);
+    }
+
+    public static function updateFileMT4()
+    {
+        $serveur_ftp="ftpupload.net";
+        $login_ftp=getenv('LOGIN_FTP');
+        $mp_ftp=getenv('MP_FTP');
+
+        $conn_id = ftp_connect($serveur_ftp, 21) or die ('Connection impossible<br />');
+
+        $login_result = ftp_login($conn_id, $login_ftp, $mp_ftp) or die ('identifiants impossible<br />');
+
+        ftp_pasv($conn_id, true);
+
+        $file_ftp="statement.htm";
+        $chemin_extraction= "data/";
+
+        $status = ftp_get($conn_id, $chemin_extraction.$file_ftp,"./htdocs/data/".$file_ftp, FTP_BINARY);
+
+        return $status;
     }
 }

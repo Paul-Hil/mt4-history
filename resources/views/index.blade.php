@@ -29,9 +29,21 @@
                     <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#date_{{$date}}" aria-expanded="true" aria-controls="collapseOne">
                             <div class="accordion_tradeDay">
                                 <div>{{ $tradesByDay['date_label'] }}</div>
-                                <div>Profit : +{{$tradesByDay['profit']}}€</div>
-                                <div>Commission : {{$tradesByDay['commission']}}0€</div>
-                                <div>Profil total : +{{$tradesByDay['profit_total']}}€</div>
+
+                                @if($tradesByDay['profit'] > 0)
+                                    <div>Profit: <span class="profit_positive">+{{$tradesByDay['profit']}}€</div>
+                                @else
+                                    <div>Profit: <span class="profit_negative">{{$tradesByDay['profit']}}€<span></div>
+                                @endif
+
+                                <div>Commission: <span class="profit_negative">{{$tradesByDay['commission']}}0€<span></span></div>
+
+                                @if($tradesByDay['profit'] > 0)
+                                    <div>Profit total: <span class="profit_positive">+{{$tradesByDay['profit_total']}}€</span></div>
+                                @else
+                                    <div>Profit total: <span class="profit_negative">{{$tradesByDay['profit_total']}}€</span></div>
+                                @endif
+
                             </div>
                     </button>
                 </h2>
@@ -40,7 +52,7 @@
                     <div class="accordion-body" style="background-color:azure">
                         <table>
                             <thead>
-                                <tr>
+                                <tr style="background-color:white;">
                                     <td>
                                         Heure
                                     </td>
@@ -67,12 +79,14 @@
                                 </td>
 
                                 @if($trade['profit'] > 0)
-                                <td class="profit_positive">
+                                    <td class="profit_positive">
+                                        +{{$trade['profit']}}
+                                    </td>
                                 @else
-                                <td class="profit_negative">
+                                    <td class="profit_negative">
+                                        {{$trade['profit']}}
+                                    </td>
                                 @endif
-                                    {{$trade['profit']}}
-                                </td>
 
                                 @if($trade['type'] === "buy")
                                     <td class='type_buy'>

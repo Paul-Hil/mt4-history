@@ -1,3 +1,7 @@
+body {
+    font-size:1.16rem;
+}
+
 div#header {
     display:flex;
     justify-content:space-around;
@@ -12,6 +16,8 @@ table {
     border:solid 4px rgb(45, 45, 45);
     border-radius:10px;
     padding:3px;
+    background-color: rgb(45, 45, 45);
+
 }
 
 
@@ -25,17 +31,18 @@ td {
 }
 
 tr:nth-child(even) {
-    background: rgb(177, 177, 177)
+    background: #FFF
+
 }
 tr:nth-child(odd) {
-    background: #FFF
+    background: rgb(177, 177, 177)
 }
 
-td.type_buy, td.profit_positive {
+td.type_buy, .profit_positive {
     color: green;
 }
 
-td.type_sell, td.profit_negative {
+td.type_sell, .profit_negative {
     color: red;
 }
 
