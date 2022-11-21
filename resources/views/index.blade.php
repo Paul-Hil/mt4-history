@@ -6,29 +6,45 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MT4 - History</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
-    <link rel="stylesheet" href="{{ URL::asset('css/app.css') }}">
+    <link rel="stylesheet" href="{{ URL::asset('assets/css/app.css') }}">
 
 </head>
 <body>
     <header>
-        <div id="header">
-            <div>
-                {{$data['account']}}
-            </div>
-
-            <div>
-                {{$data['time_file_update']}}
-            </div>
+        <div>
+            {{$data['account']}}
         </div>
+        
+        <div>
+            Balance: {{$data['balance']}}€
+        </div>
+
+        <div>
+            Profit: 
+            
+            @if($data['profit'] > 0)
+                <span style='color:green'> +{{$data['profit']}}€</span>
+            @else
+                <span style='color:red'> {{$data['profit']}}€</span>
+            @endif
+        </div>
+
+        <div>
+            {{$data['time_file_update']}}
+        </div>
+
+        <a id="image_refresh" href="/updateFileMT4">
+            <img src="/assets/images/585e4831cb11b227491c338e.png">
+        </a>
     </header>
 
     <div class="accordion" style="width:100%;margin:auto" id="accordionExample">
         @foreach($data['tradesByDays'] as $date => $tradesByDay)
             <div class="accordion-item">
                 <h2 class="accordion-header" id="headingOne">
-                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#date_{{$date}}" aria-expanded="true" aria-controls="collapseOne">
+                    <button class="accordion-button" style="background-color:#e7f1ff;padding:0;" type="button" data-bs-toggle="collapse" data-bs-target="#date_{{$date}}" aria-expanded="true" aria-controls="collapseOne">
                             <div class="accordion_tradeDay">
-                                <div>{{ $tradesByDay['date_label'] }}</div>
+                                <div class="date">{{ $tradesByDay['date_label'] }}</div>
 
                                 @if($tradesByDay['profit'] > 0)
                                     <div>Profit: <span class="profit_positive">+{{$tradesByDay['profit']}}€</div>
@@ -43,7 +59,6 @@
                                 @else
                                     <div>Profit total: <span class="profit_negative">{{$tradesByDay['profit_total']}}€</span></div>
                                 @endif
-
                             </div>
                     </button>
                 </h2>

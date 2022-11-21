@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Argument;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Routing\Redirector;
 use Carbon\Carbon;
 
 class MainController extends Controller
@@ -17,8 +18,6 @@ class MainController extends Controller
      */
     public function __invoke(Request $request)
     {
-        $status = MainController::updateFileMT4();
-
         $file = file_get_contents('data/statement.htm');
         //echo ($file);
         $dom = new \DOMDocument();
@@ -27,11 +26,12 @@ class MainController extends Controller
         $xpath = new \DOMXPath($dom);
 
         $tbody = $dom->getElementsByTagName('tbody')->item(0);
-
+        $numberOfRow = count($xpath->query('//table/tr', $tbody));
         $label = ['type', 'levier', 'date', 'profit'];
         $data = [];
 
-        foreach ($xpath->query('//table/tr', $tbody) as $line => $tr) {
+        foreach ($xpath->query('//table/tr', $tbody) as $line => $tr) 
+        {
             if($line >= 7) {
                 $count = 0;
 
@@ -59,7 +59,27 @@ class MainController extends Controller
                         $time_file_update = Carbon::parse($hours)->locale('fr-FR');
                         $time_file_update = ucfirst($time_file_update->getTranslatedDayName('dddd')) ." ".  $time_file_update->translatedFormat('d F | ') . $hours;
                     }
+                }
+            }
 
+            if(++$line === $numberOfRow) {
+                foreach ($xpath->query("td", $tr) as $key => $td) {
+                    if($key === 1) {
+                        $balance = $td->nodeValue;
+                    }
+
+                    if($key === 3) {
+                        $free_margin = $td->nodeValue;
+                    }
+                }
+            }
+
+
+            if(++$line === $numberOfRow) {
+                foreach ($xpath->query("td", $tr) as $key => $td) {
+                    if($key === 1) {
+                        $profit = $td->nodeValue;
+                    }                   
                 }
             }
         }
@@ -67,6 +87,9 @@ class MainController extends Controller
         $dataToView = [];
         $dataToView['account'] = $account;
         $dataToView['time_file_update'] = $time_file_update;
+        $dataToView['balance'] = $free_margin;
+        $dataToView['profit'] = $profit;
+
 
         $tradesByDays = [];
         $count = 0;
@@ -122,7 +145,6 @@ class MainController extends Controller
             }
         }
 
-
         $dataToView['tradesByDays'] = $tradesByDays;
 
         return view('index', ['data' => $dataToView]);
@@ -145,6 +167,6 @@ class MainController extends Controller
 
         $status = ftp_get($conn_id, $chemin_extraction.$file_ftp,"./htdocs/data/".$file_ftp, FTP_BINARY);
 
-        return $status;
+        return redirect()->route('index');
     }
 }
