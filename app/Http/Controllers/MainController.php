@@ -5,8 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\Argument;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Routing\Redirector;
 use Carbon\Carbon;
+
+use App\Models\Trade;
+use App\Models\Day;
+use App\Models\Account;
+
 
 class MainController extends Controller
 {
@@ -18,6 +24,62 @@ class MainController extends Controller
      */
     public function __invoke(Request $request)
     {
+
+        $dataToView = [];
+        $tradesList = [];
+
+        foreach(Day::all() as $day) 
+        {
+            $date = str_replace(" 00:00:00", "", $day['date']);
+
+            $tradesList[$date]['label'] = $day['label'];;
+            $tradesList[$date]['profit'] = $day['profit'];
+            $tradesList[$date]['commission'] = $day['commission'];
+            $tradesList[$date]['profit_total'] = $day['profit_total'];
+
+            foreach(Trade::all()->where('day_id', $day['id']) as $trade) {
+                $tradesList[$date]['tradesList'][] = $trade;
+            }
+        }        
+
+        $dataToView['tradesByDays'] = $tradesList;
+
+        $account = Account::firstOrFail();
+        $dataToView['account'] = $account['name'];
+        $dataToView['file_updated_at'] = $account['file_updated_at'];
+        $dataToView['balance'] = $account['balance'];
+        $dataToView['profit'] = $account['profit'];
+
+
+        //dd($dataToView);
+        return view('index', ['data' => $dataToView]);
+    }
+
+    public static function updateFileMT4()
+    {
+        $serveur_ftp="ftpupload.net";
+        $login_ftp=getenv('LOGIN_FTP');
+        $mp_ftp=getenv('MP_FTP');
+
+        $conn_id = ftp_connect($serveur_ftp, 21) or die ('Connection impossible<br />');
+
+        $login_result = ftp_login($conn_id, $login_ftp, $mp_ftp) or die ('identifiants impossible<br />');
+
+        ftp_pasv($conn_id, true);
+
+        $file_ftp="statement.htm";
+        $chemin_extraction= "data/";
+
+        $status = ftp_get($conn_id, $chemin_extraction.$file_ftp,"./htdocs/".$file_ftp, FTP_BINARY);
+
+        if($status) {
+            MainController::updateDatasTable();
+        }
+
+        return redirect()->route('index');
+    }
+
+    public static function updateDatasTable() {
         $file = file_get_contents('data/statement.htm');
         //echo ($file);
         $dom = new \DOMDocument();
@@ -54,7 +116,6 @@ class MainController extends Controller
                     if($key === 4) {
                         $time_file_update = $td->nodeValue;
 
-
                         $hours = substr($time_file_update, -5);
                         $time_file_update = Carbon::parse($hours)->locale('fr-FR');
                         $time_file_update = ucfirst($time_file_update->getTranslatedDayName('dddd')) ." ".  $time_file_update->translatedFormat('d F | ') . $hours;
@@ -83,13 +144,6 @@ class MainController extends Controller
                 }
             }
         }
-
-        $dataToView = [];
-        $dataToView['account'] = $account;
-        $dataToView['time_file_update'] = $time_file_update;
-        $dataToView['balance'] = $free_margin;
-        $dataToView['profit'] = $profit;
-
 
         $tradesByDays = [];
         $count = 0;
@@ -128,7 +182,6 @@ class MainController extends Controller
                     $result += floatval($trade['profit']);
                     $numberofTrade += 1;
                 }
-
             }
 
             $commission = -($numberofTrade * 0.10);
@@ -145,28 +198,37 @@ class MainController extends Controller
             }
         }
 
-        $dataToView['tradesByDays'] = $tradesByDays;
+        Artisan::call('migrate:fresh', ['--force' => true]);
 
-        return view('index', ['data' => $dataToView]);
-    }
+        Account::create([
+            'name' => $account,
+            'file_updated_at' => $time_file_update,
+            'balance' => $free_margin,
+            'profit' => $profit
+        ]);
 
-    public static function updateFileMT4()
-    {
-        $serveur_ftp="ftpupload.net";
-        $login_ftp=getenv('LOGIN_FTP');
-        $mp_ftp=getenv('MP_FTP');
+        foreach($tradesByDays as $date => $tradesByDay) 
+        {
+            $day = Day::create([
+                'date' => date("Y-m-d", strtotime($date)) . " 00:00:00",
+                'label' => $tradesByDay['date_label'],
+                'profit' => $tradesByDay['profit'],
+                'commission' => $tradesByDay['commission'],
+                'profit_total' => $tradesByDay['profit_total']
+            ]);
 
-        $conn_id = ftp_connect($serveur_ftp, 21) or die ('Connection impossible<br />');
-
-        $login_result = ftp_login($conn_id, $login_ftp, $mp_ftp) or die ('identifiants impossible<br />');
-
-        ftp_pasv($conn_id, true);
-
-        $file_ftp="statement.htm";
-        $chemin_extraction= "data/";
-
-        $status = ftp_get($conn_id, $chemin_extraction.$file_ftp,"./htdocs/".$file_ftp, FTP_BINARY);
-
-        return redirect()->route('index');
+            foreach($tradesByDay['trades'] as $time => $trades) {
+                foreach ($trades as $trade) 
+                {
+                    $trade = Trade::create([
+                        'dateTime' => $time,
+                        'day_id' => $day['id'],
+                        'profit' => $trade['profit'],
+                        'type' => $trade['type'],
+                        'levier' => $trade['levier']
+                    ]);
+                }
+            }
+        }
     }
 }

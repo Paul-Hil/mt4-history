@@ -30,7 +30,7 @@
         </div>
 
         <div>
-            {{$data['time_file_update']}}
+            {{$data['file_updated_at']}}
         </div>
 
         <a id="image_refresh" href="/updateFileMT4">
@@ -39,12 +39,13 @@
     </header>
 
     <div class="accordion" style="width:100%;margin:auto" id="accordionExample">
+
         @foreach($data['tradesByDays'] as $date => $tradesByDay)
             <div class="accordion-item">
                 <h2 class="accordion-header" id="headingOne">
                     <button class="accordion-button" style="background-color:#e7f1ff;padding:0;" type="button" data-bs-toggle="collapse" data-bs-target="#date_{{$date}}" aria-expanded="true" aria-controls="collapseOne">
                             <div class="accordion_tradeDay">
-                                <div class="date">{{ $tradesByDay['date_label'] }}</div>
+                                <div class="date">{{ $tradesByDay['label'] }}</div>
 
                                 @if($tradesByDay['profit'] > 0)
                                     <div>Profit: <span class="profit_positive">+{{$tradesByDay['profit']}}€</div>
@@ -62,8 +63,9 @@
                             </div>
                     </button>
                 </h2>
+                
 
-                <div id="date_{{$date}}" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                <div id="date_{{$date}}" class="accordion-collapse collapse" aria-labelledby="headingOne">
                     <div class="accordion-body" style="background-color:azure">
                         <table>
                             <thead>
@@ -86,13 +88,12 @@
                                 <tr>
                             </thead>
 
-                        @foreach($tradesByDay['trades'] as $time => $trades)
-                            @foreach($trades as $key => $trade)
+                        
+                        @foreach($tradesByDay['tradesList'] as $time => $trade)
                             <tr>
                                 <td>
-                                    {{$time}}
+                                    {{$trade['dateTime']}}
                                 </td>
-
                                 @if($trade['profit'] > 0)
                                     <td class="profit_positive">
                                         +{{$trade['profit']}}
@@ -115,7 +116,6 @@
                                     {{$trade['levier']}}
                                 </td>
                             </tr>
-                            @endforeach
                         @endforeach
                         </table>
                     </div>
