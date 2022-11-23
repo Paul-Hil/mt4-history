@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('file_updated_at');
             $table->float('balance');
             $table->float('profit');
+            $table->float('average');
+
         });
     }
 

@@ -24,6 +24,7 @@ class MainController extends Controller
      */
     public function __invoke(Request $request)
     {
+        MainController::updateFileMT4();
 
         $dataToView = [];
         $tradesList = [];
@@ -49,9 +50,12 @@ class MainController extends Controller
         $dataToView['file_updated_at'] = $account['file_updated_at'];
         $dataToView['balance'] = $account['balance'];
         $dataToView['profit'] = $account['profit'];
-
+        $dataToView['average'] = $account['average'];
 
         //dd($dataToView);
+
+
+
         return view('index', ['data' => $dataToView]);
     }
 
@@ -200,13 +204,6 @@ class MainController extends Controller
 
         Artisan::call('migrate:fresh', ['--force' => true]);
 
-        Account::create([
-            'name' => $account,
-            'file_updated_at' => $time_file_update,
-            'balance' => $free_margin,
-            'profit' => $profit
-        ]);
-
         foreach($tradesByDays as $date => $tradesByDay) 
         {
             $day = Day::create([
@@ -230,5 +227,16 @@ class MainController extends Controller
                 }
             }
         }
+
+        $nbOfDays = Day::all()->count();
+        $averageDaily = $profit / $nbOfDays;
+
+        Account::create([
+            'name' => $account,
+            'file_updated_at' => $time_file_update,
+            'balance' => $free_margin,
+            'profit' => $profit,
+            'average' => $averageDaily
+        ]);
     }
 }
