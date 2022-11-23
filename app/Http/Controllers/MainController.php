@@ -47,6 +47,7 @@ class MainController extends Controller
         $dataToView['file_updated_at'] = $account['file_updated_at'];
         $dataToView['balance'] = $account['balance'];
         $dataToView['profit'] = $account['profit'];
+        $dataToView['average'] = $account['average'];
 
         return view('index', ['data' => $dataToView]);
     }

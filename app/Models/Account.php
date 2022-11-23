@@ -9,5 +9,5 @@ class Account extends Model
 {
     use HasFactory;
     public $timestamps = false;
-    protected $fillable = ['name', 'file_updated_at', 'balance', 'profit'];
+    protected $fillable = ['name', 'file_updated_at', 'balance', 'profit', 'average'];
 }

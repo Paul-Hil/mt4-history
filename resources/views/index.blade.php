@@ -30,6 +30,16 @@
         </div>
 
         <div>
+            Moyenne: 
+            
+            @if($data['average'] > 0)
+                <span style='color:green'> +{{$data['average']}}€</span> /j
+            @else
+                <span style='color:red'> {{$data['average']}}€</span> /j
+            @endif
+        </div>
+
+        <div>
             {{$data['file_updated_at']}}
         </div>
 

@@ -162,13 +162,6 @@ class Controller extends BaseController
 
         Artisan::call('migrate:fresh', ['--force' => true]);
 
-        Account::create([
-            'name' => $account,
-            'file_updated_at' => $time_file_update,
-            'balance' => $free_margin,
-            'profit' => $profit
-        ]);
-
         foreach($tradesByDays as $date => $tradesByDay)
         {
             $day = Day::create([
@@ -192,5 +185,17 @@ class Controller extends BaseController
                 }
             }
         }
+
+        $nbOfDays = Day::all()->count();
+        $averageDaily = $profit / $nbOfDays;
+
+        Account::create([
+            'name' => $account,
+            'file_updated_at' => $time_file_update,
+            'balance' => $free_margin,
+            'profit' => $profit,
+            'average' => $averageDaily
+        ]);
     }
 }
+
