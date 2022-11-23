@@ -7,21 +7,21 @@
     <title>MT4 - History</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
     <link rel="stylesheet" href="{{ URL::asset('assets/css/app.css') }}">
-
 </head>
+
 <body>
     <header>
         <div>
             {{$data['account']}}
         </div>
-        
+
         <div>
             Balance: {{$data['balance']}}€
         </div>
 
         <div>
-            Profit: 
-            
+            Profit:
+
             @if($data['profit'] > 0)
                 <span style='color:green'> +{{$data['profit']}}€</span>
             @else
@@ -63,7 +63,7 @@
                             </div>
                     </button>
                 </h2>
-                
+
 
                 <div id="date_{{$date}}" class="accordion-collapse collapse" aria-labelledby="headingOne">
                     <div class="accordion-body" style="background-color:azure">
@@ -88,7 +88,7 @@
                                 <tr>
                             </thead>
 
-                        
+
                         @foreach($tradesByDay['tradesList'] as $time => $trade)
                             <tr>
                                 <td>

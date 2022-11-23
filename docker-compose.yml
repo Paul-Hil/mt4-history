@@ -4,7 +4,6 @@ services:
     build: .
     depends_on:
       - mysql
-      - mailhog
     ports:
       - "9080:80"
     volumes:
@@ -24,8 +23,3 @@ services:
       - mysql
     ports:
       - "9081:8080"
-  mailhog:
-    image: mailhog/mailhog:v1.0.1
-    ports:
-      - "1025:1025"
-      - "9082:8025"
