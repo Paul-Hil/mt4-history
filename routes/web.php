@@ -20,5 +20,9 @@ use App\Http\Controllers\MainController;
 
 Route::get('/', MainController::class)->name('index');
 
+Route::get('/trades-by-days/{month}', [MainController::class, 'tradesByDays'], function($month) {
+    return $month;
+})->name('tradesByDays');
+
 Route::get('/updateFileMT4', [MainController::class, 'updateFileMT4'])->name('updateFileMT4');
 
