@@ -39,7 +39,7 @@ class Controller extends BaseController
             MainController::updateDatasTable();
         }
 
-        return redirect()->route('index');
+        return redirect()->back();
     }
 
     public static function updateDatasTable() 
@@ -200,7 +200,7 @@ class Controller extends BaseController
         ]);
     }
 
-    public function getDatasToDisplay($daysList)
+    public function getDatasToDisplay($daysList, $filter = true)
     {
         $dataToView = [];
         $tradesList = [];
@@ -217,18 +217,39 @@ class Controller extends BaseController
             foreach(Trade::all()->where('day_id', $day['id']) as $trade) {
                 $tradesList[$date]['tradesList'][] = $trade;
             }
-        }        
+        }
 
-        $dataToView['tradesByDays'] = $tradesList;
 
-        $account = Account::firstOrFail();
-        $dataToView['account'] = $account['name'];
-        $dataToView['file_updated_at'] = $account['file_updated_at'];
-        $dataToView['balance'] = $account['balance'];
-        $dataToView['profit'] = $account['profit'];
-        $dataToView['average'] = $account['average'];
+        if($filter) 
+        {
+            $dataToView['tradesByDays'] = $tradesList;
+
+            $account = Account::firstOrFail();
+
+            $dataToView['account'] = $account['name'];
+            $dataToView['file_updated_at'] = $account['file_updated_at'];
+            $dataToView['balance'] = $account['balance'];
+            $dataToView['profit'] = $account['profit'];
+            $dataToView['average'] = $account['average'];
+
+            if(empty($tradesList)) {
+                return false;
+            } else {
+                return $dataToView;
+            }
+        } else {
+            $nbOfTrades = 0;
+            $profitPerMonth = 0;
+            foreach($tradesList as $trade) 
+            {
+                $profitPerMonth += $trade['profit'];
+                $nbOfTrades += count($trade['tradesList']);
+            }
+            $dataToView['profitPerMonth'] = $profitPerMonth;
+            $dataToView['nbOfTrades'] = $nbOfTrades;
+            $dataToView['commission'] = $nbOfTrades / 10;
+        }
 
         return $dataToView;
     }
-
 }
