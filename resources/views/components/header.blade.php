@@ -20,7 +20,7 @@
         </div>
 
         <div>
-            Profit: 
+            Profit total: 
             
             @if($data['profit'] > 0)
                 <span style='color:green'> +{{$data['profit']}}€</span>

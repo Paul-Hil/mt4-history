@@ -1,10 +1,28 @@
 <x-header :data=$data></x-header>
     <main>
-        <div>
+        <div class="titre_header">
             <a id="image_back" href="{{route('index')}}">
                 <img src="/assets/images/59098.png">
             </a>
-            <h3 style="text-align:center">{{$data['date']}}</h3>
+
+            <div>
+                Profit: 
+                
+                @if($data['profit'] > 0)
+                    <span style='color:green'> +{{$data['profit_month']}}€</span>
+                @else
+                    <span style='color:red'> {{$data['profit']}}€</span>
+                @endif
+            </div>
+
+            <div>
+                Commission: 
+
+                <span style='color:red'> {{$data['commission_month']}}€</span>
+            </div>
+
+            <h3 style="margin-bottom: 0;">{{$data['date']}}</h3>
+
         </div>
 
         <div class="accordion" style="width:100%;margin:auto" id="accordionExample">
@@ -38,7 +56,11 @@
                                 <thead>
                                     <tr style="background-color:white;">
                                         <td>
-                                            Heure
+                                            Open trade
+                                        </td>
+
+                                        <td>
+                                            Close trade
                                         </td>
 
                                         <td>
@@ -59,15 +81,20 @@
                             @foreach($tradesByDay['tradesList'] as $time => $trade)
                                 <tr>
                                     <td>
-                                        {{$trade['dateTime']}}
+                                        {{$trade['openTime']}}
                                     </td>
+
+                                    <td>
+                                        {{$trade['closeTime']}}
+                                    </td>
+
                                     @if($trade['profit'] > 0)
                                         <td class="profit_positive">
-                                            +{{$trade['profit']}}
+                                            +{{$trade['profit']}}€
                                         </td>
                                     @else
                                         <td class="profit_negative">
-                                            {{$trade['profit']}}
+                                            {{$trade['profit']}}€
                                         </td>
                                     @endif
 

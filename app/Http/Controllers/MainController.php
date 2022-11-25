@@ -10,7 +10,7 @@ use Illuminate\Routing\Redirector;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Route;
 
-use App\Models\Trade;
+use App\Models\TradeClose;
 use App\Models\Day;
 use App\Models\Account;
 
@@ -70,19 +70,17 @@ class MainController extends Controller
 
         $dataToView['date'] = $dateFR;
         $month_profit = 0;
+        $commission = 0;
 
         foreach($dataToView['tradesByDays']as $datasPerDay) {
             foreach($datasPerDay['tradesList'] as $trade) {
                 $month_profit += $trade['profit'];
-
+                $commission -= 0.10;
             }
         }
 
-        var_dump($month_profit);
-
-        ///// TODOOOOOOOOOOOOO
-        // $dataToView['profit_month'] = ;
-        // $dataToView['commission_month'] = $dateFR;
+        $dataToView['profit_month'] = $month_profit + $commission;
+        $dataToView['commission_month'] = $commission;
 
         return view('tradeByDays', ['data' => $dataToView]);   
     }

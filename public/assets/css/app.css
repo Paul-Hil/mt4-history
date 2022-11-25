@@ -5,7 +5,8 @@ body {
 header {
     display:flex;
     justify-content:space-around;
-    border: solid 2px #225662;
+    border: solid 5px #225662;
+    background-color: bisque;
     padding: 10px;
 }
 
@@ -18,12 +19,10 @@ a#image_refresh {
     height: 5%;
 }
 
-
-
 a#image_back > img {
     width:30px;
-    position: absolute;
-    margin: 7px;
+    margin: 0px 10px;
+    height: 35px;
 }
 
 table {
@@ -113,3 +112,24 @@ a, a:hover {
     text-decoration: inherit;
 }
 
+.titre_header {
+    text-align:center;
+    background-color:#6ba8db;
+    margin-bottom:0px;
+    padding:5px;
+    display: flex;
+    justify-content: space-between;
+
+}
+
+.trades_open {
+    background-color: bisque;
+    height: 48.9vh;
+    border: solid 3px #225662;
+    padding: 10px;
+}
+
+html, body {
+    height: 100%;
+    max-height: 100%;
+}
