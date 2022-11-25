@@ -54,8 +54,15 @@ class Controller extends BaseController
 
         $xpath = new \DOMXPath($dom);
 
+        $data = Controller::getData_openTrades($dom, $xpath);
+        Controller::getData_closeTrades($dom, $xpath, $data);
+    }
+
+    public static function getData_openTrades($dom, $xpath)
+    {
         $tbody = $dom->getElementsByTagName('tbody')->item(0);
         $numberOfRow = count($xpath->query('//table/tr', $tbody));
+        
         $label = ['open_trade', 'type', 'levier', 'close_trade', 'profit'];
         $data = [];
 
@@ -125,56 +132,6 @@ class Controller extends BaseController
                 }
             }
         }
-        
-        //////////////////////////////////////////////////////////
-        // Récupère tout les infos concernant les trades ouvert///
-        $lastLine = array_key_last($data);
-        $label = ['open_trade', 'type', 'levier', 'profit'];
-        $dataClose = [];
-
-        foreach ($xpath->query('//table/tr', $tbody) as $line => $tr) 
-        {
-            $count = 0;
-
-            if($line > $lastLine )
-           {
-                foreach ($xpath->query("td", $tr) as $key => $td)
-                {
-                    if($key === 1 || $key === 2 || $key === 3 || $key === 13) 
-                    {
-                        $dataClose[$line][$label[$count]] = $td->nodeValue;
-                        $count++ ;
-                    }
-                }
-
-                if(array_key_exists($line, $dataClose) && count($dataClose[$line]) !== 4) 
-                {
-                    unset($dataClose[$line]);
-                    
-                } else {
-                    if(array_key_exists($line, $dataClose)) 
-                    {
-                        if($dataClose[$line]['type'] !== 'buy' || $dataClose[$line]['type'] !== 'sell') {
-                            unset($dataClose[$line]);
-                        }
-                    }
-                }
-            }
-        }
-        
-            foreach($dataClose as $row => $tradeOpen) {          
-                $time = strtotime(substr($tradeOpen['open_trade'], 11));
-                $timeLessOneH = date("H:i:s", strtotime('-1 hours', $time));
-
-                $trade = TradeOpen::create([
-                    "openTime"  => $timeLessOneH,
-                    "profit"    => $tradeOpen['profit'],
-                    "levier"    => $tradeOpen['levier'],
-                    "type"      => $tradeOpen['type']
-                ]);
-            }
-            
-        
 
         $tradesByDays = [];
         $count = 0;
@@ -266,6 +223,61 @@ class Controller extends BaseController
             'profit' => $profit,
             'average' => $averageDaily
         ]);
+
+        return $data;
+    }
+
+    public static function getData_closeTrades($dom, $xpath, $data)
+    {
+        //////////////////////////////////////////////////////////
+        // Récupère tout les infos concernant les trades ouvert///
+        $lastLine = array_key_last($data);
+        $label = ['open_trade', 'type', 'levier', 'profit'];
+        $dataClose = [];
+
+        $tbody = $dom->getElementsByTagName('tbody')->item(0);
+
+        foreach ($xpath->query('//table/tr', $tbody) as $line => $tr) 
+        {
+            $count = 0;
+
+            if($line > $lastLine )
+           {
+                foreach ($xpath->query("td", $tr) as $key => $td)
+                {
+                    if($key === 1 || $key === 2 || $key === 3 || $key === 13) 
+                    {
+                        $dataClose[$line][$label[$count]] = $td->nodeValue;
+                        $count++ ;
+                    }
+                }
+
+                if(array_key_exists($line, $dataClose) && count($dataClose[$line]) !== 4) 
+                {
+                    unset($dataClose[$line]);
+                    
+                } else {
+                    if(array_key_exists($line, $dataClose)) 
+                    {
+                        if($dataClose[$line]['type'] !== 'buy' || $dataClose[$line]['type'] !== 'sell') {
+                            unset($dataClose[$line]);
+                        }
+                    }
+                }
+            }
+        }
+        
+        foreach($dataClose as $row => $tradeOpen) {          
+            $time = strtotime(substr($tradeOpen['open_trade'], 11));
+            $timeLessOneH = date("H:i:s", strtotime('-1 hours', $time));
+
+            $trade = TradeOpen::create([
+                "openTime"  => $timeLessOneH,
+                "profit"    => $tradeOpen['profit'],
+                "levier"    => $tradeOpen['levier'],
+                "type"      => $tradeOpen['type']
+            ]);
+        }    
     }
 
     public function getDatasToDisplay($daysList, $filter = true)
