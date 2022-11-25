@@ -19,9 +19,58 @@
             <h3>Trades ouvert:</h3>
 
             @if(!empty($data['trades_open']))
-                @foreach($data['trades_open'] as $trades)
+                    <table>
+                        <thead>
+                            <tr style="background-color: white;">
+                                <td>
+                                    Heure
+                                </td>
 
-                @endforeach
+                                <td>
+                                    Profit actuel
+                                </td>
+
+                                <td>
+                                    Type
+                                </td>
+
+                                <td>
+                                    Levier
+                                </td>
+                            </tr>
+                        </thead>
+
+                    @foreach($data['trades_open'] as $trades)
+                        <tr>
+                            <td>
+                                {{$trades['openTime']}}
+                            </td>
+
+                            @if($trades['profit'] > 0)
+                                <td class="profit_positive">
+                                    +{{$trades['profit']}}€
+                                </td>
+                            @else
+                                <td class="profit_negative">
+                                    {{$trades['profit']}}€
+                                </td>
+                            @endif
+
+                            @if($trades['type'] === 'buy')
+                                <td class="type_buy">
+                            @else
+                                <td class="type_sell">
+                            @endif
+                                {{$trades['type']}}
+                            </td>
+
+                            <td>
+                                {{$trades['levier']}}
+                            </td>
+                        </tr>
+                    @endforeach
+
+                    </table>
             @else
                 <h4 style="text-align:center;">- Aucun trade en cours -</h4>
             @endif

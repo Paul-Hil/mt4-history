@@ -18,6 +18,8 @@ return new class extends Migration
             $table->time('openTime');
             $table->float('profit');
             $table->float('levier');
+            $table->string('type');
+
         });
     }
 

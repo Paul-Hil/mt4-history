@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Artisan;
 use Carbon\Carbon;
 
 use App\Models\TradeClose;
+use App\Models\TradeOpen;
 use App\Models\Day;
 use App\Models\Account;
 
@@ -44,6 +45,8 @@ class Controller extends BaseController
 
     public static function updateDatasTable() 
     {
+        Artisan::call('migrate:fresh', ['--force' => true]);
+
         $file = file_get_contents('data/statement.htm');
         //echo ($file);
         $dom = new \DOMDocument();
@@ -122,25 +125,56 @@ class Controller extends BaseController
                 }
             }
         }
-
+        
+        //////////////////////////////////////////////////////////
+        // Récupère tout les infos concernant les trades ouvert///
         $lastLine = array_key_last($data);
+        $label = ['open_trade', 'type', 'levier', 'profit'];
         $dataClose = [];
 
-        // Récupère tout les infos concernant les trades ouvert
         foreach ($xpath->query('//table/tr', $tbody) as $line => $tr) 
         {
-            if($line >= $lastLine + 5)
+            $count = 0;
+
+            if($line > $lastLine )
            {
-                foreach ($xpath->query("td", $tr) as $key => $td) {
-                    //var_dump($td->nodeValue);exit;
-                    //TODOOOO
-                    // les données d'un trade open
+                foreach ($xpath->query("td", $tr) as $key => $td)
+                {
+                    if($key === 1 || $key === 2 || $key === 3 || $key === 13) 
+                    {
+                        $dataClose[$line][$label[$count]] = $td->nodeValue;
+                        $count++ ;
+                    }
+                }
+
+                if(array_key_exists($line, $dataClose) && count($dataClose[$line]) !== 4) 
+                {
+                    unset($dataClose[$line]);
+                    
+                } else {
+                    if(array_key_exists($line, $dataClose)) 
+                    {
+                        if($dataClose[$line]['type'] !== 'buy' || $dataClose[$line]['type'] !== 'sell') {
+                            unset($dataClose[$line]);
+                        }
+                    }
                 }
             }
-
-   
         }
+        
+            foreach($dataClose as $row => $tradeOpen) {          
+                $time = strtotime(substr($tradeOpen['open_trade'], 11));
+                $timeLessOneH = date("H:i:s", strtotime('-1 hours', $time));
 
+                $trade = TradeOpen::create([
+                    "openTime"  => $timeLessOneH,
+                    "profit"    => $tradeOpen['profit'],
+                    "levier"    => $tradeOpen['levier'],
+                    "type"      => $tradeOpen['type']
+                ]);
+            }
+            
+        
 
         $tradesByDays = [];
         $count = 0;
@@ -196,7 +230,6 @@ class Controller extends BaseController
             }
         }
 
-        Artisan::call('migrate:fresh', ['--force' => true]);
 
         foreach($tradesByDays as $date => $tradesByDay) 
         {
@@ -212,12 +245,12 @@ class Controller extends BaseController
                 foreach ($trades as $trade) 
                 {
                     $trade = TradeClose::create([
-                        'day_id' => $day['id'],
-                        'openTime' => $trade['open_trade'],
+                        'day_id'    => $day['id'],
+                        'openTime'  => $trade['open_trade'],
                         'closeTime' => $time,
-                        'profit' => $trade['profit'],
-                        'type' => $trade['type'],
-                        'levier' => $trade['levier']
+                        'profit'    => $trade['profit'],
+                        'type'      => $trade['type'],
+                        'levier'    => $trade['levier']
                     ]);
                 }
             }

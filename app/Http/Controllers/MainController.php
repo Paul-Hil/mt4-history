@@ -10,6 +10,7 @@ use Illuminate\Routing\Redirector;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Route;
 
+use App\Models\TradeOpen;
 use App\Models\TradeClose;
 use App\Models\Day;
 use App\Models\Account;
@@ -47,6 +48,16 @@ class MainController extends Controller
         $dataToView['average'] = $account['average'];
         $dataToView['year'] = $year;
 
+        $tradesList_open = TradeOpen::all();
+
+        foreach($tradesList_open as $key => $trade) 
+        {
+            $dataToView['trades_open'][$key]['openTime'] = $trade['openTime'];
+            $dataToView['trades_open'][$key]['profit'] = $trade['profit'];
+            $dataToView['trades_open'][$key]['levier'] = $trade['levier'];
+            $dataToView['trades_open'][$key]['type'] = $trade['type'];
+
+        }
 
         return view('index', ['data' => $dataToView]);
     }
