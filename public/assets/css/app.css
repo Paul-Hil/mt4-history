@@ -5,17 +5,24 @@ body {
 header {
     display:flex;
     justify-content:space-around;
-    border: solid 2px #225662;
+    border: solid 5px #225662;
+    background-color: bisque;
     padding: 10px;
 }
 
-img {
+a#image_refresh > img {
     width: 35%;
 }
 
 a#image_refresh {
     width: 5%;
     height: 5%;
+}
+
+a#image_back > img {
+    width:30px;
+    margin: 0px 10px;
+    height: 35px;
 }
 
 table {
@@ -77,4 +84,52 @@ div.accordion_tradeDay {
 
 .accordion-header {
     margin-bottom: .5rem;
+}
+
+.tradesList_month-6, .tradesList_month-12 {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.monthsList {
+    border: solid 3px black;
+    border-radius: 15px;
+    padding: 25px;
+    margin: 20px;
+    transition: padding 0.4s;
+
+}
+
+.monthsList:hover {
+    background-color: #266978;
+    padding: 40px;
+    transition: 0.4s;
+
+}
+
+a, a:hover {
+    color: inherit; 
+    text-decoration: inherit;
+}
+
+.titre_header {
+    text-align:center;
+    background-color:#6ba8db;
+    margin-bottom:0px;
+    padding:5px;
+    display: flex;
+    justify-content: space-between;
+
+}
+
+.trades_open {
+    background-color: bisque;
+    height: 48.9vh;
+    border: solid 3px #225662;
+    padding: 10px;
+}
+
+html, body {
+    height: 100%;
+    max-height: 100%;
 }

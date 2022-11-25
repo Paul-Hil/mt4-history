@@ -6,10 +6,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 
-class Trade extends Model
+class TradeClose extends Model
 {
     use HasFactory;
-    protected $fillable = ['dateTime', 'day_id', 'profit', 'type', 'levier'];
+    public $timestamps = false;
+    protected $table = 'trades_close';
+    protected $fillable = ['openTime', 'closeTime', 'day_id', 'profit', 'type', 'levier'];
 
     public function day() {
         return $this->belongsTo(Day::class);
