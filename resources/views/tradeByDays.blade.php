@@ -1,30 +1,5 @@
 <x-header :data=$data></x-header>
     <main>
-        <div class="titre_header">
-            <a id="image_back" href="{{route('index')}}">
-                <img src="/assets/images/59098.png">
-            </a>
-
-            <div>
-                Profit: 
-                
-                @if($data['profit'] > 0)
-                    <span style='color:green'> +{{$data['profit_month']}}€</span>
-                @else
-                    <span style='color:red'> {{$data['profit']}}€</span>
-                @endif
-            </div>
-
-            <div>
-                Commission: 
-
-                <span style='color:red'> {{$data['commission_month']}}€</span>
-            </div>
-
-            <h3 style="margin-bottom: 0;">{{$data['date']}}</h3>
-
-        </div>
-
         <div class="accordion" style="width:100%;margin:auto" id="accordionExample">
             @foreach($data['tradesByDays'] as $date => $tradesByDay)
                 <div class="accordion-item">
@@ -77,7 +52,7 @@
                                     <tr>
                                 </thead>
 
-                            
+
                             @foreach($tradesByDay['tradesList'] as $time => $trade)
                                 <tr>
                                     <td>
@@ -116,6 +91,35 @@
                     </div>
                 </div>
             @endforeach
+        </div>
+
+        <div class="titre_footer">
+            <h3 style="margin-bottom: 0;">{{$data['date']}}</h3>
+
+            <div>
+                Profit:
+
+                @if($data['profit_month_brut'] > 0)
+                    <span style='color:green'> +{{$data['profit_month_brut']}}€</span>
+                @else
+                    <span style='color:red'> {{$data['profit_month_brut']}}€</span>
+                @endif
+            </div>
+
+            <div>
+                Commission:
+                <span style='color:red'> {{$data['commission_month']}}€</span>
+            </div>
+
+            <div>
+                Profit total:
+
+                @if($data['profit_month_net'] > 0)
+                    <span style='color:green'> +{{$data['profit_month_net']}}€</span>
+                @else
+                    <span style='color:red'> {{$data['profit_month_net']}}€</span>
+                @endif
+            </div>
         </div>
     </main>
 

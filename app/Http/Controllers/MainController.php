@@ -28,6 +28,11 @@ class MainController extends Controller
         $monthsList = [];
         $dataToView = [];
 
+        if(empty(TradeClose::first()))
+        {
+            Controller::updateFileMT4();
+        }
+
         for ($month=1; $month <= 12; $month++)
         {
             $year = date('Y');
@@ -75,7 +80,7 @@ class MainController extends Controller
         $monthFR = substr($dateFR, 0 ,-4);
 
         if(!$dataToView) {
-            return redirect()->back()->withErrors(['msg' => "- Aucune données disponible pour $monthFR -"]);
+            return redirect()->back()->withErrors(['msg' => "- Aucune données disponible pour $monthFR $yearSelected -"]);
         }
 
         $dataToView['date'] = $dateFR;
@@ -89,7 +94,8 @@ class MainController extends Controller
             }
         }
 
-        $dataToView['profit_month'] = $month_profit + $commission;
+        $dataToView['profit_month_brut'] = $month_profit;
+        $dataToView['profit_month_net'] = $month_profit + $commission;
         $dataToView['commission_month'] = $commission;
 
         return view('tradeByDays', ['data' => $dataToView]);

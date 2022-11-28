@@ -10,7 +10,6 @@
             <x-card-month :data=$data :firstPart=false></x-card-month>
         </div>
 
-
         @if($errors->any())
             <h5 style="text-align:center;">{{$errors->first()}}</h5>
         @endif

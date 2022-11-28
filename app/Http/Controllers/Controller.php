@@ -26,7 +26,7 @@ class Controller extends BaseController
 
         $conn_id = ftp_connect($serveur_ftp, 21) or die ('Connection impossible<br />');
 
-        $login_result = ftp_login($conn_id, $login_ftp, $mp_ftp) or die ('identifiants impossible<br />');
+        ftp_login($conn_id, $login_ftp, $mp_ftp) or die ('identifiants impossible<br />');
 
         ftp_pasv($conn_id, true);
 
@@ -36,7 +36,7 @@ class Controller extends BaseController
         $status = ftp_get($conn_id, $chemin_extraction.$file_ftp,"./htdocs/".$file_ftp, FTP_BINARY);
 
         if($status) {
-            MainController::updateDatasTable();
+            Controller::updateDatasTable();
         }
 
         return redirect()->back();
@@ -53,11 +53,11 @@ class Controller extends BaseController
 
         $xpath = new \DOMXPath($dom);
 
-        $data = Controller::getData_openTrades($dom, $xpath);
-        Controller::getData_closeTrades($dom, $xpath, $data);
+        $data = Controller::getData_closeTrades($dom, $xpath);
+        Controller::getData_openTrades($dom, $xpath, $data);
     }
 
-    public static function getData_openTrades($dom, $xpath)
+    public static function getData_closeTrades($dom, $xpath)
     {
         $tbody = $dom->getElementsByTagName('tbody')->item(0);
         $numberOfRow = count($xpath->query('//table/tr', $tbody));
@@ -134,28 +134,70 @@ class Controller extends BaseController
 
         $tradesByDays = [];
         $count = 0;
+        $previousKey = null;
+        $inTradingClose = true;
+        $tradesByDaysOpen=[];
         foreach($data as $key => $trade)
         {
-            $date = date("d-m-Y", strtotime(str_replace(".", "/", substr($trade['close_trade'], 0,10))));
+            if($previousKey === null || $key === ($previousKey + 1) || $key === ($previousKey + 2))
+            {
+                if($inTradingClose) {
+                    $date = date("d-m-Y", strtotime(str_replace(".", "/", substr($trade['close_trade'], 0,10))));
 
-            $dateVanished = Carbon::parse($date)->locale('fr-FR');
-            $dateVanished = ucfirst($dateVanished->getTranslatedDayName('dddd')) ." ".  $dateVanished->translatedFormat('d F | Y');
+                    $dateVanished = Carbon::parse($date)->locale('fr-FR');
+                    $dateVanished = ucfirst($dateVanished->getTranslatedDayName('dddd')) ." ".  $dateVanished->translatedFormat('d F | Y');
 
-            $tradesByDays[$date]['date_label'] = $dateVanished;
+                    $tradesByDays[$date]['date_label'] = $dateVanished;
 
-            $time = strtotime(substr($trade['close_trade'], 11));
-            $timeLessOneH = date("H:i:s", strtotime('-1 hours', $time));
+                    $time = strtotime(substr($trade['close_trade'], 11));
+                    $timeLessOneH = date("H:i:s", strtotime('-1 hours', $time));
 
-            $tradesByDays[$date]['trades'][$timeLessOneH][$count]['profit'] = $trade['profit'];
-            $tradesByDays[$date]['trades'][$timeLessOneH][$count]['levier'] = $trade['levier'];
-            $tradesByDays[$date]['trades'][$timeLessOneH][$count]['type'] = $trade['type'];
+                    $tradesByDays[$date]['trades'][$timeLessOneH][$count]['profit'] = $trade['profit'];
+                    $tradesByDays[$date]['trades'][$timeLessOneH][$count]['levier'] = $trade['levier'];
+                    $tradesByDays[$date]['trades'][$timeLessOneH][$count]['type'] = $trade['type'];
 
+                    $time = strtotime(substr($trade['open_trade'], 11));
+                    $time_closeTrade = date("H:i:s", strtotime('-1 hours', $time));
+                    $tradesByDays[$date]['trades'][$timeLessOneH][$count]['open_trade'] = $time_closeTrade;
 
-            $time = strtotime(substr($trade['open_trade'], 11));
-            $time_closeTrade = date("H:i:s", strtotime('-1 hours', $time));
-            $tradesByDays[$date]['trades'][$timeLessOneH][$count]['open_trade'] = $time_closeTrade;
+                    $previousKey = $key;
+                    $count += 1;
+                } else {
+                    $time = strtotime(substr($trade['open_trade'], 11));
+                    $time_openTrade = date("H:i:s", strtotime('-1 hours', $time));
 
-            $count += 1;
+                    $tradesByDaysOpen[$count]['open_trade'] = $time_openTrade;
+
+                    $tradesByDaysOpen[$count]['profit'] = $trade['profit'];
+                    $tradesByDaysOpen[$count]['levier'] = $trade['levier'];
+                    $tradesByDaysOpen[$count]['type'] = $trade['type'];
+
+                    $previousKey = $key;
+                    $count += 1;
+                }
+            } else {
+                $inTradingClose = false;
+                $time = strtotime(substr($trade['open_trade'], 11));
+                $time_openTrade = date("H:i:s", strtotime('-1 hours', $time));
+
+                $tradesByDaysOpen[$count]['open_trade'] = $time_openTrade;
+
+                $tradesByDaysOpen[$count]['profit'] = $trade['profit'];
+                $tradesByDaysOpen[$count]['levier'] = $trade['levier'];
+                $tradesByDaysOpen[$count]['type'] = $trade['type'];
+
+                $previousKey = $key;
+                $count += 1;
+            }
+        }
+
+        foreach($tradesByDaysOpen as $tradeOpen) {
+            $trade = TradeOpen::create([
+                "openTime"  => $tradeOpen['open_trade'],
+                "profit"    => $tradeOpen['profit'],
+                "levier"    => $tradeOpen['levier'],
+                "type"      => $tradeOpen['type']
+            ]);
         }
 
         foreach($tradesByDays as $date => $oneDay)
@@ -225,9 +267,8 @@ class Controller extends BaseController
         return $data;
     }
 
-    public static function getData_closeTrades($dom, $xpath, $data)
+    public static function getData_openTrades($dom, $xpath, $data)
     {
-        //////////////////////////////////////////////////////////
         // Récupère tout les infos concernant les trades ouvert///
         $lastLine = array_key_last($data);
         $label = ['open_trade', 'type', 'levier', 'profit'];
@@ -265,7 +306,8 @@ class Controller extends BaseController
             }
         }
 
-        foreach($dataClose as $row => $tradeOpen) {
+
+        foreach($dataClose as $tradeOpen) {
             $time = strtotime(substr($tradeOpen['open_trade'], 11));
             $timeLessOneH = date("H:i:s", strtotime('-1 hours', $time));
 

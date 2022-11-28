@@ -11,17 +11,20 @@
 </head>
 <body>
     <header>
-        <div>
+        <!-- <div>
             {{$data['account']}}
+        </div> -->
+        <div>
+            {{$data['file_updated_at']}}
         </div>
-        
+
         <div>
             Balance: {{$data['balance']}}€
         </div>
 
         <div>
-            Profit total: 
-            
+            Profit total:
+
             @if($data['profit'] > 0)
                 <span style='color:green'> +{{$data['profit']}}€</span>
             @else
@@ -30,8 +33,8 @@
         </div>
 
         <div>
-            Moyenne: 
-            
+            Moyenne:
+
             @if($data['average'] > 0)
                 <span style='color:green'> +{{$data['average']}}€</span> /j
             @else
@@ -39,11 +42,11 @@
             @endif
         </div>
 
-        <div>
-            {{$data['file_updated_at']}}
-        </div>
-
         <a id="image_refresh" href="/updateFileMT4">
             <img src="/assets/images/585e4831cb11b227491c338e.png">
+        </a>
+
+        <a id="image_back" href="{{route('index')}}">
+            <img src="/assets/images/59098.png">
         </a>
     </header>
