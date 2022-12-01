@@ -33,18 +33,18 @@ class Controller extends BaseController
         $file_ftp="statement.htm";
         $chemin_extraction= "data/";
 
-        $status = ftp_get($conn_id, $chemin_extraction.$file_ftp,"./htdocs/".$file_ftp, FTP_BINARY);
+        // $status = ftp_get($conn_id, $chemin_extraction.$file_ftp,"./htdocs/".$file_ftp, FTP_BINARY);
 
-        if($status) {
+        // if($status) {
             Controller::updateDatasTable();
-        }
+        // }
 
         return redirect()->back();
     }
 
     public static function updateDatasTable()
     {
-        Artisan::call('migrate:fresh', ['--force' => true]);
+        // Artisan::call('migrate:fresh', ['--force' => true]);
 
         $file = file_get_contents('data/statement.htm');
         //echo ($file);
@@ -54,7 +54,7 @@ class Controller extends BaseController
         $xpath = new \DOMXPath($dom);
 
         $data = Controller::getData_closeTrades($dom, $xpath);
-        Controller::getData_openTrades($dom, $xpath, $data);
+        //Controller::getData_openTrades($dom, $xpath, $data);
     }
 
     public static function getData_closeTrades($dom, $xpath)
@@ -334,7 +334,7 @@ class Controller extends BaseController
             $tradesList[$date]['commission'] = $day['commission'];
             $tradesList[$date]['profit_total'] = $day['profit_total'];
 
-            foreach(TradeClose::all()->where('day_id', $day['id']) as $trade) {
+            foreach(TradeClose::all()->where('day_id', $day['id'])->sortByDesc('openTime') as $trade) {
                 $tradesList[$date]['tradesList'][] = $trade;
             }
         }

@@ -71,7 +71,7 @@ class MainController extends Controller
         $monthSelected = Route::current()->parameter('month');
         $yearSelected = Route::current()->parameter('year');
 
-        $daysList = Day::whereYear('date', $yearSelected)->whereMonth('date', $monthSelected)->get();
+        $daysList = Day::whereYear('date', $yearSelected)->whereMonth('date', $monthSelected)->orderBy('date', 'desc')->get();
 
         $dataToView = Controller::getDatasToDisplay($daysList);
 
