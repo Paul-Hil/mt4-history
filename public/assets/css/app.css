@@ -107,6 +107,10 @@ div.accordion_tradeDay {
     margin-bottom: .5rem;
 }
 
+.accordion-item {
+    margin: 8px 0;
+}
+
 .tradesList_month-6, .tradesList_month-12 {
     display: flex;
     justify-content: space-evenly;
@@ -152,8 +156,19 @@ a, a:hover {
     height: 100%;
     padding: 10px;
     width: 30vw;
-    border-bottom: solid 3px #225662
+    border-bottom: solid 3px #225662;
+    position: relative;
+    overflow-y: scroll;
 }
+
+.trades_open {
+    height: 27vh;
+}
+
+.trades_close > table {
+    width: 95%;
+}
+
 
 #section_infos {
     display: flex;
@@ -186,4 +201,9 @@ body::-webkit-scrollbar {
 
 #tradingview_f7cd1 {
     height: inherit;
+}
+
+.tradesList_month-6 > a,
+.tradesList_month-12 > a {
+    width: 100%;
 }

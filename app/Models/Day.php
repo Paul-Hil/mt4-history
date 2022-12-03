@@ -11,7 +11,7 @@ class Day extends Model
     public $timestamps = false;
     protected $fillable = ['date', 'label', 'profit', 'commission', 'profit_total'];
 
-    public function trade() {
-        return $this->hasMany(Trade::class);
+    public function tradeClose() {
+        return $this->hasMany(TradeClose::class);
     }
 }

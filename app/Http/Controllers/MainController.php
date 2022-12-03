@@ -30,7 +30,7 @@ class MainController extends Controller
 
         if(empty(TradeClose::first()))
         {
-            Controller::updateFileMT4();
+        Controller::updateFileMT4();
         }
 
         for ($month=1; $month <= 12; $month++)
@@ -52,16 +52,29 @@ class MainController extends Controller
         $dataToView['average'] = $account['average'];
         $dataToView['year'] = $year;
 
-        $tradesList_open = TradeOpen::all();
+        $todayDate = Day::whereDate('date', date('Y-m-d'))->first();
+        if($todayDate) {
+           $tradesList_closeToday = $todayDate->tradeClose()->orderBy('openTime', 'desc')->get();
 
-        foreach($tradesList_open as $key => $trade)
+           foreach($tradesList_closeToday as $key => $trade)
+           {
+               $dataToView['trades_close'][$key]['openTime'] = $trade['openTime'];
+               $dataToView['trades_close'][$key]['closeTime'] = $trade['closeTime'];
+   
+               $dataToView['trades_close'][$key]['profit'] = $trade['profit'];
+               $dataToView['trades_close'][$key]['levier'] = $trade['levier'];
+               $dataToView['trades_close'][$key]['type'] = $trade['type'];
+           }
+        }
+
+        foreach(TradeOpen::all() as $key => $trade)
         {
             $dataToView['trades_open'][$key]['openTime'] = $trade['openTime'];
             $dataToView['trades_open'][$key]['profit'] = $trade['profit'];
             $dataToView['trades_open'][$key]['levier'] = $trade['levier'];
             $dataToView['trades_open'][$key]['type'] = $trade['type'];
-
         }
+        //dd($dataToView);
 
         return view('index', ['data' => $dataToView]);
     }

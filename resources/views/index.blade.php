@@ -1,6 +1,9 @@
 <x-header :data=$data></x-header>
-    <main>
-            <h3 class="titre_header" style="text-align:center;margin:0;color:white;">{{$data['year']}}</h3>
+    <main>  
+        <div>
+        <h3 class="titre_header" style="text-align:center;margin:0;color:white;">{{$data['year']}}</h3>
+
+        </div>
         <div id="tradesList">
             <div class="tradesList_month-6">
                 <x-card-month :data=$data :firstPart=true></x-card-month>
@@ -41,6 +44,74 @@
             </div>
             <!-- TradingView Widget END -->
             <div style="height: 50%;">
+                <div class="trades_close">
+                    <h3>Trades de la journée:</h3>
+
+                    @if(!empty($data['trades_close']))
+                    <table>
+                                <thead>
+                                    <tr style="background-color:white;">
+                                        <td>
+                                            Open trade
+                                        </td>
+
+                                        <td>
+                                            Close trade
+                                        </td>
+
+                                        <td>
+                                            Profit
+                                        </td>
+
+                                        <td>
+                                            Type
+                                        </td>
+
+                                        <td>
+                                            Levier
+                                        </td>
+                                    <tr>
+                                </thead>
+
+                    @foreach($data['trades_close'] as $trade)
+                                <tr>
+                                    <td>
+                                        {{$trade['openTime']}}
+                                    </td>
+
+                                    <td>
+                                        {{$trade['closeTime']}}
+                                    </td>
+
+                                    @if($trade['profit'] > 0)
+                                        <td class="profit_positive">
+                                            +{{$trade['profit']}}€
+                                        </td>
+                                    @else
+                                        <td class="profit_negative">
+                                            {{$trade['profit']}}€
+                                        </td>
+                                    @endif
+
+                                    @if($trade['type'] === "buy")
+                                        <td class='type_buy'>
+                                    @else
+                                        <td class='type_sell'>
+                                    @endif
+                                        {{$trade['type']}}
+                                    </td>
+
+                                    <td>
+                                        {{$trade['levier']}}
+                                    </td>
+                                </tr>
+                    @endforeach
+                    </table>
+                    @else
+                        <h4 style="text-align:center;">- Aucun trade -</h4>
+                    @endif
+                </div>
+
                 <div class="trades_open">
                     <h3>Trades ouvert:</h3>
 
@@ -100,12 +171,6 @@
                     @else
                         <h4 style="text-align:center;">- Aucun trade en cours -</h4>
                     @endif
-                </div>
-
-                <div class="trades_close">
-                    <h3>Trades de la journée:</h3>
-
-                        <h4 style="text-align:center;">- Aucun trade -</h4>
                 </div>
             </div>
         </div>

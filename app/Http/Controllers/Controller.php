@@ -33,19 +33,17 @@ class Controller extends BaseController
         $file_ftp="statement.htm";
         $chemin_extraction= "data/";
 
-        // $status = ftp_get($conn_id, $chemin_extraction.$file_ftp,"./htdocs/".$file_ftp, FTP_BINARY);
+        $status = ftp_get($conn_id, $chemin_extraction.$file_ftp,"./htdocs/".$file_ftp, FTP_BINARY);
 
-        // if($status) {
+        if($status) {
             Controller::updateDatasTable();
-        // }
+        }
 
         return redirect()->back();
     }
 
     public static function updateDatasTable()
     {
-        // Artisan::call('migrate:fresh', ['--force' => true]);
-
         $file = file_get_contents('data/statement.htm');
         //echo ($file);
         $dom = new \DOMDocument();
@@ -54,7 +52,6 @@ class Controller extends BaseController
         $xpath = new \DOMXPath($dom);
 
         $data = Controller::getData_closeTrades($dom, $xpath);
-        //Controller::getData_openTrades($dom, $xpath, $data);
     }
 
     public static function getData_closeTrades($dom, $xpath)
@@ -69,7 +66,7 @@ class Controller extends BaseController
         foreach ($xpath->query('//table/tr', $tbody) as $line => $tr)
         {
             // Récupère tout les trades close
-            if($line >= 7) {
+            if($line >= 3) {
                 $count = 0;
 
                 foreach ($xpath->query("td", $tr) as $key => $td) {
@@ -101,10 +98,13 @@ class Controller extends BaseController
                     }
 
                     if($key === 4) {
-                        $time_file_update = $td->nodeValue;
 
+                        $time_file_update = $td->nodeValue;
+                        $strArray = explode(' ',$time_file_update);
+                        
                         $hours = substr($time_file_update, -5);
-                        $time_file_update = Carbon::parse($hours)->locale('fr-FR');
+
+                        $time_file_update = Carbon::parse($strArray[0] ."/". date('n', strtotime($strArray[1])) ."/". $strArray[2] )->locale('fr-FR');
                         $time_file_update = ucfirst($time_file_update->getTranslatedDayName('dddd')) ." ".  $time_file_update->translatedFormat('d F | ') . $hours;
                     }
                 }
@@ -191,6 +191,21 @@ class Controller extends BaseController
             }
         }
 
+        foreach(TradeOpen::all() as $tradeOpen) {
+            $tradeOpen->delete();
+        }
+
+        $datesList = Day::whereYear('date', date('Y'))->whereMonth('date', date('m'))->get();
+        foreach($datesList as $date) {
+             $date->tradeClose()->delete();
+             $date->delete();
+        }
+
+        $accountFirst = Account::first();
+        if($accountFirst) {
+            $accountFirst->delete();
+        }
+
         foreach($tradesByDaysOpen as $tradeOpen) {
             $trade = TradeOpen::create([
                 "openTime"  => $tradeOpen['open_trade'],
@@ -227,7 +242,6 @@ class Controller extends BaseController
             }
         }
 
-
         foreach($tradesByDays as $date => $tradesByDay)
         {
             $day = Day::create([
@@ -254,6 +268,8 @@ class Controller extends BaseController
         }
 
         $nbOfDays = Day::all()->count();
+
+        $profit = $free_margin - 505;
         $averageDaily = $profit / $nbOfDays;
 
         Account::create([
@@ -265,59 +281,6 @@ class Controller extends BaseController
         ]);
 
         return $data;
-    }
-
-    public static function getData_openTrades($dom, $xpath, $data)
-    {
-        // Récupère tout les infos concernant les trades ouvert///
-        $lastLine = array_key_last($data);
-        $label = ['open_trade', 'type', 'levier', 'profit'];
-        $dataClose = [];
-
-        $tbody = $dom->getElementsByTagName('tbody')->item(0);
-
-        foreach ($xpath->query('//table/tr', $tbody) as $line => $tr)
-        {
-            $count = 0;
-
-            if($line > $lastLine )
-           {
-                foreach ($xpath->query("td", $tr) as $key => $td)
-                {
-                    if($key === 1 || $key === 2 || $key === 3 || $key === 13)
-                    {
-                        $dataClose[$line][$label[$count]] = $td->nodeValue;
-                        $count++ ;
-                    }
-                }
-
-                if(array_key_exists($line, $dataClose) && count($dataClose[$line]) !== 4)
-                {
-                    unset($dataClose[$line]);
-
-                } else {
-                    if(array_key_exists($line, $dataClose))
-                    {
-                        if($dataClose[$line]['type'] !== 'buy' || $dataClose[$line]['type'] !== 'sell') {
-                            unset($dataClose[$line]);
-                        }
-                    }
-                }
-            }
-        }
-
-
-        foreach($dataClose as $tradeOpen) {
-            $time = strtotime(substr($tradeOpen['open_trade'], 11));
-            $timeLessOneH = date("H:i:s", strtotime('-1 hours', $time));
-
-            $trade = TradeOpen::create([
-                "openTime"  => $timeLessOneH,
-                "profit"    => $tradeOpen['profit'],
-                "levier"    => $tradeOpen['levier'],
-                "type"      => $tradeOpen['type']
-            ]);
-        }
     }
 
     public function getDatasToDisplay($daysList, $filter = true)
