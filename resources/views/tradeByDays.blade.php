@@ -25,7 +25,7 @@
                         </button>
                     </h2>
 
-                    <div id="date_{{$date}}" class="accordion-collapse collapse" aria-labelledby="heading_{{$date}}">
+                    <div id="date_{{$date}}" class="accordion-collapse collapse" aria-labelledby="date_{{$date}}" data-bs-parent="#accordionExample">
                         <div class="accordion-body" style="background-color:azure">
                             <table>
                                 <thead>
