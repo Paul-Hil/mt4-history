@@ -3,8 +3,8 @@
         <div class="accordion" style="width:100%;margin:auto" id="accordionExample">
             @foreach($data['tradesByDays'] as $date => $tradesByDay)
                 <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingOne">
-                        <button class="accordion-button" style="background-color:#e7f1ff;padding:0;" type="button" data-bs-toggle="collapse" data-bs-target="#date_{{$date}}" aria-expanded="true" aria-controls="collapseOne">
+                    <h2 class="accordion-header" id="heading_{{$date}}">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#date_{{$date}}" aria-expanded="true" aria-controls="date_{{$date}}" style="background-color:#e7f1ff;padding:0;">
                                 <div class="accordion_tradeDay">
                                     <div class="date">{{ $tradesByDay['label'] }}</div>
 
@@ -25,7 +25,7 @@
                         </button>
                     </h2>
 
-                    <div id="date_{{$date}}" class="accordion-collapse collapse" aria-labelledby="headingOne">
+                    <div id="date_{{$date}}" class="accordion-collapse collapse" aria-labelledby="heading_{{$date}}">
                         <div class="accordion-body" style="background-color:azure">
                             <table>
                                 <thead>

@@ -25,7 +25,6 @@ class Controller extends BaseController
         $mp_ftp=getenv('MP_FTP');
 
         $conn_id = ftp_connect($serveur_ftp, 21) or die ('Connection impossible<br />');
-
         ftp_login($conn_id, $login_ftp, $mp_ftp) or die ('identifiants impossible<br />');
 
         ftp_pasv($conn_id, true);

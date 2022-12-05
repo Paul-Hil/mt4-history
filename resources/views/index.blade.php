@@ -43,14 +43,82 @@
                     </script>
             </div>
             <!-- TradingView Widget END -->
-            <div style="height: 50%;">
+
+
+            <div id="trades_infos">
+                @if(!empty($data['trades_open']))
+                <style>
+                    #trades_infos{
+                        height:50%;
+                    }
+                </style>
+                <div class="trades_open">
+                    <h3>Trades ouvert:</h3>
+                        <table>
+                            <thead>
+                                <tr style="background-color: white;">
+                                    <td>
+                                        Heure
+                                    </td>
+
+                                    <td>
+                                        Profit actuel
+                                    </td>
+
+                                    <td>
+                                        Type
+                                    </td>
+
+                                    <td>
+                                        Levier
+                                    </td>
+                                </tr>
+                            </thead>
+
+                        @foreach($data['trades_open'] as $trades)
+                            <tr>
+                                <td>
+                                    {{$trades['openTime']}}
+                                </td>
+
+                                @if($trades['profit'] > 0)
+                                    <td class="profit_positive">
+                                        +{{$trades['profit']}}€
+                                    </td>
+                                @else
+                                    <td class="profit_negative">
+                                        {{$trades['profit']}}€
+                                    </td>
+                                @endif
+
+                                @if($trades['type'] === 'buy')
+                                    <td class="type_buy">
+                                @else
+                                    <td class="type_sell">
+                                @endif
+                                    {{$trades['type']}}
+                                </td>
+
+                                <td>
+                                    {{$trades['levier']}}
+                                </td>
+                            </tr>
+                        @endforeach
+                        </table>
+                </div>
+                @endif
+
                 <div class="trades_close">
-                    <h3>Trades de la journée:</h3>
+                    <h3>Historique:</h3>
 
                     @if(!empty($data['trades_close']))
                     <table>
                                 <thead>
                                     <tr style="background-color:white;">
+                                        <td>
+                                            Date
+                                        </td>
+
                                         <td>
                                             Open trade
                                         </td>
@@ -75,6 +143,10 @@
 
                     @foreach($data['trades_close'] as $trade)
                                 <tr>
+                                    <td>
+                                        {{$trade['date']}}
+                                    </td>
+
                                     <td>
                                         {{$trade['openTime']}}
                                     </td>
@@ -112,66 +184,6 @@
                     @endif
                 </div>
 
-                <div class="trades_open">
-                    <h3>Trades ouvert:</h3>
-
-                    @if(!empty($data['trades_open']))
-                            <table>
-                                <thead>
-                                    <tr style="background-color: white;">
-                                        <td>
-                                            Heure
-                                        </td>
-
-                                        <td>
-                                            Profit actuel
-                                        </td>
-
-                                        <td>
-                                            Type
-                                        </td>
-
-                                        <td>
-                                            Levier
-                                        </td>
-                                    </tr>
-                                </thead>
-
-                            @foreach($data['trades_open'] as $trades)
-                                <tr>
-                                    <td>
-                                        {{$trades['openTime']}}
-                                    </td>
-
-                                    @if($trades['profit'] > 0)
-                                        <td class="profit_positive">
-                                            +{{$trades['profit']}}€
-                                        </td>
-                                    @else
-                                        <td class="profit_negative">
-                                            {{$trades['profit']}}€
-                                        </td>
-                                    @endif
-
-                                    @if($trades['type'] === 'buy')
-                                        <td class="type_buy">
-                                    @else
-                                        <td class="type_sell">
-                                    @endif
-                                        {{$trades['type']}}
-                                    </td>
-
-                                    <td>
-                                        {{$trades['levier']}}
-                                    </td>
-                                </tr>
-                            @endforeach
-
-                            </table>
-                    @else
-                        <h4 style="text-align:center;">- Aucun trade en cours -</h4>
-                    @endif
-                </div>
             </div>
         </div>
     </main>

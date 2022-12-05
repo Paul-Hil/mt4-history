@@ -107,10 +107,6 @@ div.accordion_tradeDay {
     margin-bottom: .5rem;
 }
 
-.accordion-item {
-    margin: 8px 0;
-}
-
 .tradesList_month-6, .tradesList_month-12 {
     display: flex;
     justify-content: space-evenly;
@@ -146,7 +142,7 @@ a, a:hover {
     font-weight: 700;
     position: fixed;
     bottom: 0;
-    width: -webkit-fill-available;
+    width: 100%;
     border: solid 12px #225662;
     background-color: bisque;
 }
@@ -191,6 +187,7 @@ body::-webkit-scrollbar {
     position: relative;
     overflow-y: scroll;
     height: 87vh;
+    --bs-accordion-bg: unset;
 
 }
 
