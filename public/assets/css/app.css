@@ -191,6 +191,12 @@ body::-webkit-scrollbar {
 
 }
 
+.accordion-body {
+    border: solid 9px black;
+    border-top: none;
+    background-color: #6eb3b3;
+}
+
 .tradingview-widget-container {
     width: 70vw;
     height: 100%;
