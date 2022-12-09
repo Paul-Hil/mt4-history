@@ -1,5 +1,5 @@
 <x-header :data=$data></x-header>
-    <main>  
+    <main>
         <div>
         <h3 class="titre_header" style="text-align:center;margin:0;color:white;">{{$data['year']}}</h3>
 
@@ -134,10 +134,6 @@
                                         <td>
                                             Type
                                         </td>
-
-                                        <td>
-                                            Levier
-                                        </td>
                                     <tr>
                                 </thead>
 
@@ -171,10 +167,6 @@
                                         <td class='type_sell'>
                                     @endif
                                         {{$trade['type']}}
-                                    </td>
-
-                                    <td>
-                                        {{$trade['levier']}}
                                     </td>
                                 </tr>
                     @endforeach

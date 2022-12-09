@@ -52,34 +52,31 @@ class MainController extends Controller
         $dataToView['average'] = $account['average'];
         $dataToView['year'] = $year;
 
-        $todayDate = Day::whereDate('date', date('Y-m-d'))->first();
-        
-        if($todayDate) {
-        //    $tradesList_closeToday = $todayDate->tradeClose()->orderBy('openTime', 'desc')->get();
-            $tradesList_closeToday = TradeClose::orderBy('id', 'desc')->take(20)->get();
-           foreach($tradesList_closeToday as $key => $trade)
-           {
-                $date = substr(substr($trade->day()->get()[0]->date, 0, -9), 5);
-                $day = substr($date, 3);
-                $month = substr($date, 0, -3);
-                $dataToView['trades_close'][$key]['date'] = $day ."-". $month;
-                $dataToView['trades_close'][$key]['openTime'] = $trade['openTime'];
-                $dataToView['trades_close'][$key]['closeTime'] = $trade['closeTime'];
-   
-                $dataToView['trades_close'][$key]['profit'] = $trade['profit'];
-                $dataToView['trades_close'][$key]['levier'] = $trade['levier'];
-                $dataToView['trades_close'][$key]['type'] = $trade['type'];
-           }
+        $tradesList_closeToday = TradeClose::orderBy('id', 'desc')->take(30)->get();
+
+        foreach($tradesList_closeToday as $key => $trade)
+        {
+            $date = substr(substr($trade->day()->get()[0]->date, 0, -9), 5);
+            $day = substr($date, 3);
+            $month = substr($date, 0, -3);
+
+            $dataToView['trades_close'][$key]['date'] = $day ."-". $month;
+
+            $dataToView['trades_close'][$key]['openTime'] = $trade['openTime'];
+            $dataToView['trades_close'][$key]['closeTime'] = $trade['closeTime'];
+
+            $dataToView['trades_close'][$key]['profit'] = $trade['profit'];
+            $dataToView['trades_close'][$key]['levier'] = $trade['levier'];
+            $dataToView['trades_close'][$key]['type'] = $trade['type'];
         }
+
 
         foreach(TradeOpen::all() as $key => $trade)
         {
             $dataToView['trades_open'][$key]['openTime'] = $trade['openTime'];
             $dataToView['trades_open'][$key]['profit'] = $trade['profit'];
-            $dataToView['trades_open'][$key]['levier'] = $trade['levier'];
             $dataToView['trades_open'][$key]['type'] = $trade['type'];
         }
-        //dd($dataToView);
 
         return view('index', ['data' => $dataToView]);
     }
