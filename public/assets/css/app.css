@@ -8,6 +8,7 @@ body {
 
 html {
     height: 100%;
+    overflow-y: hidden; 
 }
 
 header {
@@ -209,4 +210,19 @@ body::-webkit-scrollbar {
 .tradesList_month-6 > a,
 .tradesList_month-12 > a {
     width: 100%;
+}
+
+#years_selected {
+    display: flex;
+    justify-content: space-evenly;
+    padding: 5px;
+}
+
+.yearButtons {
+    padding: 4px;
+}
+
+.yearLink {
+    border: solid 3px white;
+    border-radius: 14px;
 }

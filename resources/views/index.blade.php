@@ -1,9 +1,17 @@
 <x-header :data=$data></x-header>
     <main>  
-        <div>
-        <h3 class="titre_header" style="text-align:center;margin:0;color:white;">{{$data['year']}}</h3>
+        <div id="years_selected">
+            <a href="/?year={{$data['year'] - 1}}" class="yearLink">
+                <img src="/assets/images/left-arrow.png" class="yearButtons">
+            </a>
 
+            <h3 class="titre_header" style="text-align:center;margin:0;color:white;">{{$data['year']}}</h3>
+
+            <a href="/?year={{$data['year'] + 1}}" class="yearLink">
+                <img src="/assets/images/right-arrow.png" class="yearButtons">
+            </a>
         </div>
+
         <div id="tradesList">
             <div class="tradesList_month-6">
                 <x-card-month :data=$data :firstPart=true></x-card-month>
@@ -15,7 +23,7 @@
         </div>
 
         @if($errors->any())
-            <h5 style="text-align:center;">{{$errors->first()}}</h5>
+            <h5 style="text-align:center;color:white">{{$errors->first()}}</h5>
         @endif
 
         <div id="section_infos">

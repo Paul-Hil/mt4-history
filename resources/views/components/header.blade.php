@@ -11,9 +11,14 @@
 </head>
 <body>
     <header>
-        <!-- <div>
-            {{$data['account']}}
-        </div> -->
+        <a id="home" href="{{route('index')}}">
+            <img src="/assets/images/home.png">
+        </a>
+
+        <a id="image_back" href="{{ url()->previous() }}">
+            <img src="/assets/images/59098.png">
+        </a>
+        
         <div>
             {{$data['file_updated_at']}}
         </div>
@@ -42,11 +47,7 @@
             @endif
         </div>
 
-        <a id="image_refresh" href="/updateFileMT4">
-            <img src="/assets/images/585e4831cb11b227491c338e.png">
-        </a>
-
-        <a id="image_back" href="{{route('index')}}">
-            <img src="/assets/images/59098.png">
+        <a href="/updateFileMT4">
+            <img src="/assets/images/refresh-page-option.png">
         </a>
     </header>

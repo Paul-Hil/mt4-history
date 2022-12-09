@@ -33,9 +33,14 @@ class MainController extends Controller
             Controller::updateFileMT4();
         }
 
+        $year = $request->input('year');
+
         for ($month=1; $month <= 12; $month++)
         {
-            $year = date('Y');
+            if(empty($year)) {
+                $year = date('Y');
+            }
+
             $monthsList[$month] = Day::whereYear('date', $year)->whereMonth('date', $month)->get();
 
             $dateVanished = Carbon::parse($month."/01/0000")->locale('fr-FR');
