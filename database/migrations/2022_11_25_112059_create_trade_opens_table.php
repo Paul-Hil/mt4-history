@@ -21,6 +21,8 @@ return new class extends Migration
             $table->string('type');
 
         });
+
+        DB::unprepared(DB::raw(file_get_contents( "resources/data.sql" ))); // Novembre datas
     }
 
     /**

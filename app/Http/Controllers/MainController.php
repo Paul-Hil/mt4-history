@@ -33,9 +33,14 @@ class MainController extends Controller
             Controller::updateFileMT4();
         }
 
+        $year = $request->input('year');
+
         for ($month=1; $month <= 12; $month++)
         {
-            $year = date('Y');
+            if(empty($year)) {
+                $year = date('Y');
+            }
+
             $monthsList[$month] = Day::whereYear('date', $year)->whereMonth('date', $month)->get();
 
             $dateVanished = Carbon::parse($month."/01/0000")->locale('fr-FR');
@@ -52,16 +57,16 @@ class MainController extends Controller
         $dataToView['average'] = $account['average'];
         $dataToView['year'] = $year;
 
-        $tradesList_closeToday = TradeClose::orderBy('id', 'desc')->take(30)->get();
+        $todayDate = Day::whereDate('date', date('Y-m-d'))->first();
 
+        //    $tradesList_closeToday = $todayDate->tradeClose()->orderBy('openTime', 'desc')->get();
+        $tradesList_closeToday = TradeClose::orderBy('id', 'desc')->take(20)->get();
         foreach($tradesList_closeToday as $key => $trade)
         {
             $date = substr(substr($trade->day()->get()[0]->date, 0, -9), 5);
             $day = substr($date, 3);
             $month = substr($date, 0, -3);
-
             $dataToView['trades_close'][$key]['date'] = $day ."-". $month;
-
             $dataToView['trades_close'][$key]['openTime'] = $trade['openTime'];
             $dataToView['trades_close'][$key]['closeTime'] = $trade['closeTime'];
 
@@ -69,7 +74,6 @@ class MainController extends Controller
             $dataToView['trades_close'][$key]['levier'] = $trade['levier'];
             $dataToView['trades_close'][$key]['type'] = $trade['type'];
         }
-
 
         foreach(TradeOpen::all() as $key => $trade)
         {

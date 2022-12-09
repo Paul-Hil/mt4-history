@@ -8,6 +8,7 @@ body {
 
 html {
     height: 100%;
+    overflow-y: hidden; 
 }
 
 header {
@@ -191,6 +192,12 @@ body::-webkit-scrollbar {
 
 }
 
+.accordion-body {
+    border: solid 9px black;
+    border-top: none;
+    background-color: #6eb3b3;
+}
+
 .tradingview-widget-container {
     width: 70vw;
     height: 100%;
@@ -203,4 +210,19 @@ body::-webkit-scrollbar {
 .tradesList_month-6 > a,
 .tradesList_month-12 > a {
     width: 100%;
+}
+
+#years_selected {
+    display: flex;
+    justify-content: space-evenly;
+    padding: 5px;
+}
+
+.yearButtons {
+    padding: 4px;
+}
+
+.yearLink {
+    border: solid 3px white;
+    border-radius: 14px;
 }
