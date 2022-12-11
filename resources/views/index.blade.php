@@ -1,14 +1,14 @@
 <x-header :data=$data></x-header>
     <main>
         <div id="years_selected">
-            <a href="/?year={{$data['year'] - 1}}" class="yearLink">
-                <img src="/assets/images/left-arrow.png" class="yearButtons">
+            <a href="/?year={{$data['year'] - 1}}">
+                <img src="/assets/images/left-arrow.png">
             </a>
 
-            <h3 class="titre_header" style="text-align:center;margin:0;color:white;">{{$data['year']}}</h3>
+            <h3 class="titre_header" style="text-align:center;margin:0 45px;color:white;">{{$data['year']}}</h3>
 
-            <a href="/?year={{$data['year'] + 1}}" class="yearLink">
-                <img src="/assets/images/right-arrow.png" class="yearButtons">
+            <a href="/?year={{$data['year'] + 1}}">
+                <img src="/assets/images/right-arrow.png">
             </a>
         </div>
 

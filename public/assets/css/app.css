@@ -8,7 +8,7 @@ body {
 
 html {
     height: 100%;
-    overflow-y: hidden; 
+    overflow-y: hidden;
 }
 
 header {
@@ -116,7 +116,6 @@ div.accordion_tradeDay {
 .monthsList {
     border: solid 3px black;
     border-radius: 15px;
-    margin: 20px;
     transition: padding 0.4s;
     background-color: #7bd9ed;
     padding: 20px 35px;
@@ -166,13 +165,13 @@ a, a:hover {
     width: 95%;
 }
 
-
 #section_infos {
     display: flex;
     width: 100%;
     border-top: solid 3px #225662;
     height: 100%;
-    max-height: 52.5vh;}
+    max-height: 52.5vh;
+}
 
 #tradesList{
     height: 100%;
@@ -210,19 +209,12 @@ body::-webkit-scrollbar {
 .tradesList_month-6 > a,
 .tradesList_month-12 > a {
     width: 100%;
+    margin: 10px;
 }
 
 #years_selected {
     display: flex;
-    justify-content: space-evenly;
+    justify-content: center;
     padding: 5px;
 }
 
-.yearButtons {
-    padding: 4px;
-}
-
-.yearLink {
-    border: solid 3px white;
-    border-radius: 14px;
-}
