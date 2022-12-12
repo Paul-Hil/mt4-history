@@ -56,10 +56,11 @@ class MainController extends Controller
         $dataToView['profit'] = $account['profit'];
         $dataToView['average'] = $account['average'];
         $dataToView['year'] = $year;
-        
-        // $daysList = Day::whereMonth('date', date('m')->get())
-        $tradesList_closeToday = TradeClose::orderBy('id', 'desc')->take(30)->get();
 
+        //$todayDate = Day::whereDate('date', date('Y-m-d'))->first();
+
+        $tradesList_closeToday = TradeClose::orderBy('id', 'desc')->take(20)->get();
+        
         foreach($tradesList_closeToday as $key => $trade)
         {
             $date = substr(substr($trade->day()->get()[0]->date, 0, -9), 5);
@@ -73,13 +74,11 @@ class MainController extends Controller
             $dataToView['trades_close'][$key]['levier'] = $trade['levier'];
             $dataToView['trades_close'][$key]['type'] = $trade['type'];
         }
-    
 
         foreach(TradeOpen::all() as $key => $trade)
         {
             $dataToView['trades_open'][$key]['openTime'] = $trade['openTime'];
             $dataToView['trades_open'][$key]['profit'] = $trade['profit'];
-            $dataToView['trades_open'][$key]['levier'] = $trade['levier'];
             $dataToView['trades_open'][$key]['type'] = $trade['type'];
         }
 
