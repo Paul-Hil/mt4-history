@@ -50,33 +50,26 @@ class Controller extends BaseController
 
         $xpath = new \DOMXPath($dom);
 
-        $data = Controller::getData_closeTrades($dom, $xpath);
-    }
-
-    public static function getData_closeTrades($dom, $xpath)
-    {
         $tbody = $dom->getElementsByTagName('tbody')->item(0);
         $numberOfRow = count($xpath->query('//table/tr', $tbody));
 
-        $label = ['open_trade', 'type', 'levier', 'close_trade', 'profit'];
+        $label = ['open_trade', 'type', 'levier', 'price', 'close_trade', 'profit'];
         $data = [];
 
-        // Récupère tout les infos concernant les trades cloturés
+        // Récupère tout les infos concernant les trades
         foreach ($xpath->query('//table/tr', $tbody) as $line => $tr)
         {
-            // Récupère tout les trades close
             if($line >= 3) {
                 $count = 0;
 
                 foreach ($xpath->query("td", $tr) as $key => $td) {
-                    if($key === 1 || $key === 2 || $key === 3 || $key === 8 || $key === 13) {
+                    if($key === 1 || $key === 2 || $key === 3 || $key === 5 || $key === 8 || $key === 13) {
 
                         $data[$line][$label[$count]] = $td->nodeValue;
                         $count += 1;
                     }
                 }
-
-                if(isset($data[$line]) && count($data[$line]) !== 5) {
+                if(isset($data[$line]) && count($data[$line]) !== 6) {
                     unset($data[$line]);
                 } else {
 
@@ -136,6 +129,7 @@ class Controller extends BaseController
         $previousKey = null;
         $inTradingClose = true;
         $tradesByDaysOpen=[];
+
         foreach($data as $key => $trade)
         {
             if($previousKey === null || $key === ($previousKey + 1) || $key === ($previousKey + 2))
@@ -210,7 +204,9 @@ class Controller extends BaseController
                 "openTime"  => $tradeOpen['open_trade'],
                 "profit"    => $tradeOpen['profit'],
                 "levier"    => $tradeOpen['levier'],
-                "type"      => $tradeOpen['type']
+                "type"      => $tradeOpen['type'],
+                "price"      => $tradeOpen['price']
+
             ]);
         }
 

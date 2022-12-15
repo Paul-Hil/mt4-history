@@ -19,10 +19,9 @@ return new class extends Migration
             $table->float('profit');
             $table->float('levier');
             $table->string('type');
-
         });
 
-        DB::unprepared(DB::raw(file_get_contents( "resources/data.sql" ))); // Novembre datas
+        DB::unprepared(DB::raw(file_get_contents("resources/data.sql"))); // Load old datas
     }
 
     /**

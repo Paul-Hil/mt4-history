@@ -70,15 +70,15 @@
                                     </td>
 
                                     <td>
+                                        Prix
+                                    </td>
+
+                                    <td>
                                         Profit actuel
                                     </td>
 
                                     <td>
                                         Type
-                                    </td>
-
-                                    <td>
-                                        Levier
                                     </td>
                                 </tr>
                             </thead>
@@ -87,6 +87,10 @@
                             <tr>
                                 <td>
                                     {{$trades['openTime']}}
+                                </td>
+
+                                <td>
+                                    {{$trades['price']}}
                                 </td>
 
                                 @if($trades['profit'] > 0)
@@ -105,10 +109,6 @@
                                     <td class="type_sell">
                                 @endif
                                     {{$trades['type']}}
-                                </td>
-
-                                <td>
-                                    {{$trades['levier']}}
                                 </td>
                             </tr>
                         @endforeach

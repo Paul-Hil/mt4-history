@@ -220,8 +220,8 @@ CREATE TABLE `trades_open` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `trades_open` (`id`, `openTime`, `profit`, `levier`, `type`) VALUES
-(1,	'00:45:00',	-0.63,	0.02,	'sell');
+-- INSERT INTO `trades_open` (`id`, `openTime`, `profit`, `levier`, `type`) VALUES
+-- (1,	'00:45:00',	-0.63,	0.02,	'sell');
 
 DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (

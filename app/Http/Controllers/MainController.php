@@ -57,8 +57,6 @@ class MainController extends Controller
         $dataToView['average'] = $account['average'];
         $dataToView['year'] = $year;
 
-        //$todayDate = Day::whereDate('date', date('Y-m-d'))->first();
-
         $tradesList_closeToday = TradeClose::orderBy('id', 'desc')->take(20)->get();
         
         foreach($tradesList_closeToday as $key => $trade)
@@ -79,6 +77,7 @@ class MainController extends Controller
         {
             $dataToView['trades_open'][$key]['openTime'] = $trade['openTime'];
             $dataToView['trades_open'][$key]['profit'] = $trade['profit'];
+            $dataToView['trades_open'][$key]['price'] = $trade['price'];
             $dataToView['trades_open'][$key]['type'] = $trade['type'];
         }
 
