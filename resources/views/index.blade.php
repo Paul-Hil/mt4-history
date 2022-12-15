@@ -77,9 +77,9 @@
                                         Type
                                     </td>
 
-                                    <td>
+                                    <!-- <td>
                                         Levier
-                                    </td>
+                                    </td> -->
                                 </tr>
                             </thead>
 
@@ -105,10 +105,6 @@
                                     <td class="type_sell">
                                 @endif
                                     {{$trades['type']}}
-                                </td>
-
-                                <td>
-                                    {{$trades['levier']}}
                                 </td>
                             </tr>
                         @endforeach
