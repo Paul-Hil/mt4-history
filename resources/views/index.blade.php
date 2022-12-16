@@ -80,13 +80,6 @@
                                     <td>
                                         Type
                                     </td>
-<<<<<<< HEAD
-=======
-
-                                    <!-- <td>
-                                        Levier
-                                    </td> -->
->>>>>>> 693b5768c8ce87b1c297a55c70c8a32c7570abd5
                                 </tr>
                             </thead>
 

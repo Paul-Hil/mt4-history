@@ -44,7 +44,7 @@ class Controller extends BaseController
     public static function updateDatasTable()
     {
         $file = file_get_contents('data/statement.htm');
-        //echo ($file);
+        echo ($file);
         $dom = new \DOMDocument();
         $dom->loadHTML($file);
 
@@ -200,12 +200,13 @@ class Controller extends BaseController
         }
 
         foreach($tradesByDaysOpen as $tradeOpen) {
+            dd($tradeOpen);
             $trade = TradeOpen::create([
                 "openTime"  => $tradeOpen['open_trade'],
                 "profit"    => $tradeOpen['profit'],
                 "levier"    => $tradeOpen['levier'],
                 "type"      => $tradeOpen['type'],
-                "price"      => $tradeOpen['price']
+                "price"     => $tradeOpen['price']
 
             ]);
         }
