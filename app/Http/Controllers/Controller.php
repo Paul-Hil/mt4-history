@@ -32,11 +32,11 @@ class Controller extends BaseController
         $file_ftp="statement.htm";
         $chemin_extraction= "data/";
 
-        //$status = ftp_get($conn_id, $chemin_extraction.$file_ftp,"./htdocs/".$file_ftp, FTP_BINARY);
+        $status = ftp_get($conn_id, $chemin_extraction.$file_ftp,"./htdocs/".$file_ftp, FTP_BINARY);
 
-        //if($status) {
+        if($status) {
             Controller::updateDatasTable();
-        //}
+        }
 
         return redirect()->back();
     }

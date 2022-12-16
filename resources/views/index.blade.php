@@ -71,6 +71,7 @@
                             <span class="profit_negative">
                             @endif
                             {{$data['profit_tradesOpen']}}€<span>
+                                
                         <span>
                     </div>
                         <table>
