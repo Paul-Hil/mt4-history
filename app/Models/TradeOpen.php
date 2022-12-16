@@ -10,6 +10,6 @@ class TradeOpen extends Model
     use HasFactory;
     protected $table = 'trades_open';
     public $timestamps = false;
-    protected $fillable = ['openTime', 'profit', 'type', 'levier'];
+    protected $fillable = ['openTime', 'profit', 'type', 'levier', 'price'];
 
 }

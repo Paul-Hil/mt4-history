@@ -32,11 +32,11 @@ class Controller extends BaseController
         $file_ftp="statement.htm";
         $chemin_extraction= "data/";
 
-        $status = ftp_get($conn_id, $chemin_extraction.$file_ftp,"./htdocs/".$file_ftp, FTP_BINARY);
+        //$status = ftp_get($conn_id, $chemin_extraction.$file_ftp,"./htdocs/".$file_ftp, FTP_BINARY);
 
-        if($status) {
+        //if($status) {
             Controller::updateDatasTable();
-        }
+        //}
 
         return redirect()->back();
     }
@@ -176,8 +176,9 @@ class Controller extends BaseController
                 $tradesByDaysOpen[$count]['open_trade'] = $time_openTrade;
 
                 $tradesByDaysOpen[$count]['profit'] = $trade['profit'];
-                $tradesByDaysOpen[$count]['levier'] = $trade['levier'];
+                $tradesByDaysOpen[$count]['price'] = $trade['price'];
                 $tradesByDaysOpen[$count]['type'] = $trade['type'];
+                $tradesByDaysOpen[$count]['levier'] = $trade['levier'];
 
                 $previousKey = $key;
                 $count += 1;
@@ -200,7 +201,6 @@ class Controller extends BaseController
         }
 
         foreach($tradesByDaysOpen as $tradeOpen) {
-            dd($tradeOpen);
             $trade = TradeOpen::create([
                 "openTime"  => $tradeOpen['open_trade'],
                 "profit"    => $tradeOpen['profit'],

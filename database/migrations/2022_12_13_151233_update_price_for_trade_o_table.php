@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('trades_open', function (Blueprint $table) {
-            $table->integer('price');
+            $table->float('price');
         });
     }
 };

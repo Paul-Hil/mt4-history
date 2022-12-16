@@ -73,13 +73,18 @@ class MainController extends Controller
             $dataToView['trades_close'][$key]['type'] = $trade['type'];
         }
 
+        $profit_tradesOpen = 0;
         foreach(TradeOpen::all() as $key => $trade)
         {
             $dataToView['trades_open'][$key]['openTime'] = $trade['openTime'];
             $dataToView['trades_open'][$key]['profit'] = $trade['profit'];
             $dataToView['trades_open'][$key]['price'] = $trade['price'];
             $dataToView['trades_open'][$key]['type'] = $trade['type'];
+            $profit_tradesOpen += $trade['profit'];
         }
+
+        $dataToView['profit_tradesOpen'] = $profit_tradesOpen;
+
 
         return view('index', ['data' => $dataToView]);
     }

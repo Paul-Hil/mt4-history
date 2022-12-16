@@ -61,7 +61,18 @@
                     }
                 </style>
                 <div class="trades_open">
-                    <h3>Trades ouvert:</h3>
+                    <div style="display:flex;justify-content:space-between">
+                        <h3>Trades ouvert:</h3>
+                        <span>Total:
+
+                            @if($data['profit_tradesOpen'] > 0)
+                            <span class="profit_positive">+
+                            @else
+                            <span class="profit_negative">
+                            @endif
+                            {{$data['profit_tradesOpen']}}€<span>
+                        <span>
+                    </div>
                         <table>
                             <thead>
                                 <tr style="background-color: white;">
