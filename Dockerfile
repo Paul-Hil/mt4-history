@@ -45,4 +45,5 @@ RUN git config --global user.name "Paul-Hil" \
     && git config --global user.email "famhilairep@gmail.com"
 
 # Activation de la réécriture d'URL pour Apache
+EXPOSE 808
 RUN a2enmod rewrite
