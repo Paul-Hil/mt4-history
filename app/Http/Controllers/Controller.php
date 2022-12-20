@@ -93,7 +93,7 @@ class Controller extends BaseController
 
                         $time_file_update = $td->nodeValue;
                         $strArray = explode(' ',$time_file_update);
-                        
+
                         $hours = substr($time_file_update, -5);
 
                         $time_file_update = Carbon::parse($strArray[0] ."/". date('n', strtotime($strArray[1])) ."/". $strArray[2] )->locale('fr-FR');
@@ -160,7 +160,7 @@ class Controller extends BaseController
                     $time_openTrade = date("H:i:s", strtotime('-1 hours', $time));
 
                     $tradesByDaysOpen[$count]['open_trade'] = $time_openTrade;
-
+                    $tradesByDaysOpen[$count]['price'] = $trade['price'];
                     $tradesByDaysOpen[$count]['profit'] = $trade['profit'];
                     $tradesByDaysOpen[$count]['levier'] = $trade['levier'];
                     $tradesByDaysOpen[$count]['type'] = $trade['type'];
