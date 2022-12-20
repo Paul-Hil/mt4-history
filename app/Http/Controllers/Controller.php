@@ -20,7 +20,7 @@ class Controller extends BaseController
 
     public static function updateFileMT4()
     {
-        $serveur_ftp="ftpupload.net";
+        $serveur_ftp="files.000webhost.com";
         $login_ftp=getenv('LOGIN_FTP');
         $mp_ftp=getenv('MP_FTP');
 
@@ -32,7 +32,7 @@ class Controller extends BaseController
         $file_ftp="statement.htm";
         $chemin_extraction= "data/";
 
-        $status = ftp_get($conn_id, $chemin_extraction.$file_ftp,"./htdocs/".$file_ftp, FTP_BINARY);
+        $status = ftp_get($conn_id, $chemin_extraction.$file_ftp,"./public_html/".$file_ftp, FTP_BINARY);
 
         if($status) {
             Controller::updateDatasTable();
@@ -44,7 +44,7 @@ class Controller extends BaseController
     public static function updateDatasTable()
     {
         $file = file_get_contents('data/statement.htm');
-        echo ($file);
+        //echo ($file);
         $dom = new \DOMDocument();
         $dom->loadHTML($file);
 
@@ -189,6 +189,7 @@ class Controller extends BaseController
             $tradeOpen->delete();
         }
 
+        // Deletes all trades closes at this month
         $datesList = Day::whereYear('date', date('Y'))->whereMonth('date', date('m'))->get();
         foreach($datesList as $date) {
              $date->tradeClose()->delete();
