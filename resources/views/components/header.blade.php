@@ -7,7 +7,7 @@
     <title>MT4 - History</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
     <link rel="stylesheet" href="{{ URL::asset('assets/css/app.css') }}">
-
+    <link rel="icon" type="image/png" href="{{ URL::asset('assets/images/favmt4.png') }}" />
 </head>
 <body>
     <header>
@@ -18,7 +18,7 @@
         <a id="image_back" href="{{ url()->previous() }}">
             <img src="/assets/images/59098.png">
         </a>
-        
+
         <div>
             {{$data['file_updated_at']}}
         </div>
