@@ -20,7 +20,7 @@ class Controller extends BaseController
 
     public static function updateFileMT4()
     {
-        $serveur_ftp="files.000webhost.com";
+        $serveur_ftp="FTP.mt4-history.x10.mx";
         $login_ftp=getenv('LOGIN_FTP');
         $mp_ftp=getenv('MP_FTP');
 
@@ -32,7 +32,7 @@ class Controller extends BaseController
         $file_ftp="statement.htm";
         $chemin_extraction= "data/";
 
-        $status = ftp_get($conn_id, $chemin_extraction.$file_ftp,"./public_html/".$file_ftp, FTP_BINARY);
+        $status = ftp_get($conn_id, $chemin_extraction.$file_ftp,"./history/".$file_ftp, FTP_BINARY);
 
         if($status) {
             Controller::updateDatasTable();
