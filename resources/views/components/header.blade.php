@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="{{ URL::asset('assets/css/app.css') }}">
     <link rel="icon" type="image/png" href="{{ URL::asset('assets/images/favmt4.png') }}" />
 </head>
+
 <body>
     <header>
         <a id="home" href="{{route('index')}}">
@@ -25,6 +26,16 @@
 
         <div>
             Balance: {{$data['balance']}}€
+        </div>
+
+        <div>
+            Profit 2023:
+
+            @if($data['profit'] > 0)
+                <span style='color:green'> +{{$data['profit']}}€</span>
+            @else
+                <span style='color:red'> {{$data['profit']}}€</span>
+            @endif
         </div>
 
         <div>

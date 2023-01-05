@@ -36,7 +36,7 @@
                                 {
                                 "autosize": true,
                                 "symbol": "FOREXCOM:XAUUSD",
-                                "interval": "30",
+                                "interval": "15",
                                 "timezone": "Europe/Paris",
                                 "theme": "dark",
                                 "style": "1",
@@ -44,7 +44,7 @@
                                 "toolbar_bg": "#f1f3f6",
                                 "enable_publishing": false,
                                 "hide_top_toolbar": true,
-                                "allow_symbol_change": true,
+                                "save_image": false,
                                 "container_id": "tradingview_f7cd1"
                                 }
                             );
@@ -52,29 +52,27 @@
             </div>
             <!-- TradingView Widget END -->
 
-
             <div id="trades_infos">
                 @if(!empty($data['trades_open']))
-                <style>
-                    #trades_infos{
-                        height:50%;
-                    }
-                </style>
-                <div class="trades_open">
-                    <div style="display:flex;justify-content:space-between">
-                        <h3>Trades ouvert:</h3>
-                        <span>Total:
 
-                            @if($data['profit_tradesOpen'] > 0)
-                            <span class="profit_positive">+
-                            @else
-                            <span class="profit_negative">
-                            @endif
-                            {{$data['profit_tradesOpen']}}€<span>
-                                
-                        <span>
+                <div class="trades_open">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                        <h3>Trades ouvert:</h3>
+                        
+                        @if(count($data['trades_open']) > 1)
+                            <span id="tradeOpen_total">Total:
+
+                                @if($data['profit_tradesOpen'] > 0)
+                                <span class="profit_positive">+
+                                @else
+                                <span class="profit_negative">
+                                @endif
+                                {{$data['profit_tradesOpen']}}€</span>   
+                            </span>
+                        @endif
+
                     </div>
-                        <table>
+                        <table style="width: 100%;">
                             <thead>
                                 <tr style="background-color: white;">
                                     <td>
@@ -191,15 +189,20 @@
                                 </tr>
                     @endforeach
                     </table>
-                    @else
-                        <h4 style="text-align:center;">- Aucun trade -</h4>
                     @endif
                 </div>
-
             </div>
         </div>
     </main>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
+
+<script>
+window.addEventListener("DOMContentLoaded", (event) => {
+    setTimeout(() => {
+        document.querySelector('h5').style.display = "none";
+    }, "3000");
+});
+</script>
 </body>
 </html>
