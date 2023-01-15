@@ -25,16 +25,12 @@
         </div>
 
         <div>
-            Balance: {{$data['balance']}}€
-        </div>
+            Profit {{$data['year']}}:
 
-        <div>
-            Profit 2023:
-
-            @if($data['profit'] > 0)
-                <span style='color:green'> +{{$data['profit']}}€</span>
+            @if($data['profitYear'] > 0)
+                <span style='color:green'> +{{$data['profitYear']}}€</span>
             @else
-                <span style='color:red'> {{$data['profit']}}€</span>
+                <span style='color:red'> {{$data['profitYear']}}€</span>
             @endif
         </div>
 
@@ -42,9 +38,9 @@
             Profit total:
 
             @if($data['profit'] > 0)
-                <span style='color:green'> +{{$data['profit']}}€</span>
+                <span style='color:green'> +{{$data['profitTotal']}}€</span>
             @else
-                <span style='color:red'> {{$data['profit']}}€</span>
+                <span style='color:red'> {{$data['profitTotal']}}€</span>
             @endif
         </div>
 
@@ -56,6 +52,10 @@
             @else
                 <span style='color:red'> {{$data['average']}}€</span> /j
             @endif
+        </div>
+
+        <div>
+            Balance: {{$data['balance']}}€
         </div>
 
         <a href="/updateFileMT4">

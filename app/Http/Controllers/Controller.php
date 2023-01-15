@@ -44,7 +44,6 @@ class Controller extends BaseController
     public static function updateDatasTable()
     {
         $file = file_get_contents('data/statement.htm');
-        //echo ($file);
         $dom = new \DOMDocument();
         $dom->loadHTML($file);
 
@@ -132,9 +131,9 @@ class Controller extends BaseController
 
         foreach($data as $key => $trade)
         {
-            if($previousKey === null || $key === ($previousKey + 1) || $key === ($previousKey + 2))
-            {
-                if($inTradingClose) {
+            if(count($trade) === 6) {
+            // if($previousKey === null || $key === ($previousKey + 1) || $key === ($previousKey + 2) && count($trade) === 6)
+                // if($inTradingClose) {
                     $date = date("d-m-Y", strtotime(str_replace(".", "/", substr($trade['close_trade'], 0,10))));
 
                     $dateVanished = Carbon::parse($date)->locale('fr-FR');
@@ -168,21 +167,21 @@ class Controller extends BaseController
                     $previousKey = $key;
                     $count += 1;
                 }
-            } else {
-                $inTradingClose = false;
-                $time = strtotime(substr($trade['open_trade'], 11));
-                $time_openTrade = date("H:i:s", strtotime('-1 hours', $time));
+            // } else {
+            //     $inTradingClose = false;
+            //     $time = strtotime(substr($trade['open_trade'], 11));
+            //     $time_openTrade = date("H:i:s", strtotime('-1 hours', $time));
 
-                $tradesByDaysOpen[$count]['open_trade'] = $time_openTrade;
+            //     $tradesByDaysOpen[$count]['open_trade'] = $time_openTrade;
 
-                $tradesByDaysOpen[$count]['profit'] = $trade['profit'];
-                $tradesByDaysOpen[$count]['price'] = $trade['price'];
-                $tradesByDaysOpen[$count]['type'] = $trade['type'];
-                $tradesByDaysOpen[$count]['levier'] = $trade['levier'];
+            //     $tradesByDaysOpen[$count]['profit'] = $trade['profit'];
+            //     $tradesByDaysOpen[$count]['price'] = $trade['price'];
+            //     $tradesByDaysOpen[$count]['type'] = $trade['type'];
+            //     $tradesByDaysOpen[$count]['levier'] = $trade['levier'];
 
-                $previousKey = $key;
-                $count += 1;
-            }
+            //     $previousKey = $key;
+            //     $count += 1;
+            // }
         }
 
         foreach(TradeOpen::all() as $tradeOpen) {
@@ -299,7 +298,6 @@ class Controller extends BaseController
             }
         }
 
-
         if($filter)
         {
             $dataToView['tradesByDays'] = $tradesList;
@@ -319,13 +317,13 @@ class Controller extends BaseController
             }
         } else {
             $nbOfTrades = 0;
-            $profitPerMonth = 0;
+            $profit = 0;
             foreach($tradesList as $trade)
             {
-                $profitPerMonth += $trade['profit'];
+                $profit += $trade['profit'];
                 $nbOfTrades += count($trade['tradesList']);
             }
-            $dataToView['profitPerMonth'] = $profitPerMonth;
+            $dataToView['profitPerMonth'] = $profit;
             $dataToView['nbOfTrades'] = $nbOfTrades;
             $dataToView['commission'] = $nbOfTrades / 10;
         }

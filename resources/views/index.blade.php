@@ -1,4 +1,5 @@
 <x-header :data=$data></x-header>
+
     <main>
         <div id="years_selected">
             <a href="/?year={{$data['year'] - 1}}">
@@ -58,7 +59,7 @@
                 <div class="trades_open">
                     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
                         <h3>Trades ouvert:</h3>
-                        
+
                         @if(count($data['trades_open']) > 1)
                             <span id="tradeOpen_total">Total:
 
@@ -67,7 +68,7 @@
                                 @else
                                 <span class="profit_negative">
                                 @endif
-                                {{$data['profit_tradesOpen']}}€</span>   
+                                {{$data['profit_tradesOpen']}}€</span>
                             </span>
                         @endif
 

@@ -153,7 +153,8 @@ a, a:hover {
 
 .trades_open, .trades_close {
     background-color: bisque;
-    height: 33vh;
+    /* height: 33vh; */
+    height: 52vh;
     padding: 10px;
     width: 30vw;
     border-bottom: solid 3px #225662;

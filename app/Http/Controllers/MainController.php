@@ -28,13 +28,13 @@ class MainController extends Controller
         $monthsList = [];
         $dataToView = [];
 
+        // Si la base est vide,
         if(empty(TradeClose::first()))
         {
             Controller::updateFileMT4();
         }
 
         $year = $request->input('year');
-
         for ($month=1; $month <= 12; $month++)
         {
             if(empty($year)) {
@@ -57,9 +57,9 @@ class MainController extends Controller
         $dataToView['average'] = $account['average'];
         $dataToView['year'] = $year;
 
-        $tradesList_closeToday = TradeClose::orderBy('id', 'desc')->take(20)->get();
-        
-        foreach($tradesList_closeToday as $key => $trade)
+        $lastTradesClose = TradeClose::orderBy('id', 'desc')->take(20)->get();
+
+        foreach($lastTradesClose as $key => $trade)
         {
             $date = substr(substr($trade->day()->get()[0]->date, 0, -9), 5);
             $day = substr($date, 3);
@@ -85,6 +85,14 @@ class MainController extends Controller
 
         $dataToView['profit_tradesOpen'] = $profit_tradesOpen;
 
+        $daysList = [];
+        $daysList = Day::whereYear('date', $year)->get();
+        $result = Controller::getDatasToDisplay($daysList, false);
+        $dataToView['profitYear'] = $result['profitPerMonth'];
+
+        $daysList = Day::all();
+        $result = Controller::getDatasToDisplay($daysList, false);
+        $dataToView['profitTotal'] = $result['profitPerMonth'];
 
         return view('index', ['data' => $dataToView]);
     }
