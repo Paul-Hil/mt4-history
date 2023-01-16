@@ -125,10 +125,32 @@ class MainController extends Controller
             }
         }
 
+        $daysList = [];
+        $daysList = Day::whereYear('date', $yearSelected)->get();
+        $result = Controller::getDatasToDisplay($daysList, false);
+        $dataToView['profitYear'] = $result['profitPerMonth'];
+
+        $daysList = Day::all();
+        $result = Controller::getDatasToDisplay($daysList, false);
+        $dataToView['profitTotal'] = $result['profitPerMonth'];
+
         $dataToView['profit_month_brut'] = $month_profit;
         $dataToView['profit_month_net'] = $month_profit + $commission;
         $dataToView['commission_month'] = $commission;
+        $dataToView['year'] = $yearSelected;
+
 
         return view('tradeByDays', ['data' => $dataToView]);
+    }
+
+    public function getHeaderDatas(Request $request)
+    {
+        $yearSelected = Route::current()->parameter('year');
+
+        $daysList = [];
+        $daysList = Day::whereYear('date', $yearSelected)->get();
+        $result = Controller::getDatasToDisplay($daysList, false);
+        $dataToView['profitYear'] = $result['profitPerMonth'];
+
     }
 }
