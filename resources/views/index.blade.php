@@ -1,5 +1,4 @@
 <x-header :data=$data></x-header>
-
     <main>
         <div id="years_selected">
             <a href="/?year={{$data['year'] - 1}}">
@@ -26,7 +25,7 @@
         @if($errors->any())
             <h5 style="text-align:center;color:white">{{$errors->first()}}</h5>
         @endif
-
+        
         <div id="section_infos">
             <!-- TradingView Widget BEGIN -->
             <div class="tradingview-widget-container">

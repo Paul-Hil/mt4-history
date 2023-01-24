@@ -3,9 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Routing\Redirector;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Route;
 
@@ -35,12 +32,13 @@ class MainController extends Controller
         }
 
         $year = $request->input('year');
+
+        if(empty($year)) {
+            $year = date('Y');
+        }
+
         for ($month=1; $month <= 12; $month++)
         {
-            if(empty($year)) {
-                $year = date('Y');
-            }
-
             $monthsList[$month] = Day::whereYear('date', $year)->whereMonth('date', $month)->get();
 
             $dateVanished = Carbon::parse($month."/01/0000")->locale('fr-FR');
@@ -48,14 +46,6 @@ class MainController extends Controller
 
             $dataToView[$monthFR] = Controller::getDatasToDisplay($monthsList[$month], false);
         }
-
-        $account = Account::firstOrFail();
-        $dataToView['account'] = $account['name'];
-        $dataToView['file_updated_at'] = $account['file_updated_at'];
-        $dataToView['balance'] = $account['balance'];
-        $dataToView['profit'] = $account['profit'];
-        $dataToView['average'] = $account['average'];
-        $dataToView['year'] = $year;
 
         $lastTradesClose = TradeClose::orderBy('id', 'desc')->take(20)->get();
 
@@ -83,6 +73,14 @@ class MainController extends Controller
             $profit_tradesOpen += $trade['profit'];
         }
 
+        $result = MainController::getHeaderDatas($request);
+        $dataToView['file_updated_at'] = $result['file_updated_at'];
+        $dataToView['balance'] = $result['balance'];
+        $dataToView['average'] = $result['average'];
+        $dataToView['year'] = $result['year'];
+        $dataToView['profitYear'] = $result['profitYear'];
+        $dataToView['profitTotal'] = $result['profitTotal'];
+
         $dataToView['profit_tradesOpen'] = $profit_tradesOpen;
 
         $daysList = [];
@@ -93,6 +91,7 @@ class MainController extends Controller
         $daysList = Day::all();
         $result = Controller::getDatasToDisplay($daysList, false);
         $dataToView['profitTotal'] = $result['profitPerMonth'];
+        //dd($dataToView);
 
         return view('index', ['data' => $dataToView]);
     }
@@ -139,18 +138,34 @@ class MainController extends Controller
         $dataToView['commission_month'] = $commission;
         $dataToView['year'] = $yearSelected;
 
-
         return view('tradeByDays', ['data' => $dataToView]);
     }
 
     public function getHeaderDatas(Request $request)
     {
-        $yearSelected = Route::current()->parameter('year');
+        $dataToView = [];
+        $yearSelected = $request->input('year');
+
+        if(empty($yearSelected)) {
+            $yearSelected = date('Y');
+        }
+
+        $account = Account::firstOrFail();
+        $dataToView['file_updated_at'] = $account['file_updated_at'];
+        $dataToView['balance'] = $account['balance'];
+        //$dataToView['profit'] = $account['profit'];
+        $dataToView['average'] = $account['average'];
+        $dataToView['year'] = $yearSelected;
 
         $daysList = [];
         $daysList = Day::whereYear('date', $yearSelected)->get();
         $result = Controller::getDatasToDisplay($daysList, false);
         $dataToView['profitYear'] = $result['profitPerMonth'];
 
+        $daysList = Day::all();
+        $result = Controller::getDatasToDisplay($daysList, false);
+        $dataToView['profitTotal'] = $result['profitPerMonth'];
+
+        return $dataToView;
     }
 }

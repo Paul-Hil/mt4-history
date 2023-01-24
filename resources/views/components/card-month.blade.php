@@ -5,7 +5,6 @@
             <a href="/trades-by-days/{{$count}}/{{$data['year']}}">
                 <div class="monthsList">
                     <h4 style="text-align: center;">{{$month}}</h4>
-
                     @if($infos['profitPerMonth'] > 0)
                         <div>Profit: <span class="profit_positive">+{{$infos['profitPerMonth']}}€</span></div>
                     @else
