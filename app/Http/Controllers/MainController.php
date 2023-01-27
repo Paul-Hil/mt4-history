@@ -25,7 +25,7 @@ class MainController extends Controller
         $monthsList = [];
         $dataToView = [];
 
-        // Si la base est vide,
+        // Si la bdd est vide,
         if(empty(TradeClose::first()))
         {
             Controller::updateFileMT4();
@@ -91,7 +91,6 @@ class MainController extends Controller
         $daysList = Day::all();
         $result = Controller::getDatasToDisplay($daysList, false);
         $dataToView['profitTotal'] = $result['profitPerMonth'];
-        //dd($dataToView);
 
         return view('index', ['data' => $dataToView]);
     }

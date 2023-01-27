@@ -39,13 +39,13 @@ class Controller extends BaseController
             Controller::updateDatasTable();
         }
 
-        //return redirect()->back();
+        return redirect()->back();
     }
 
     public static function updateDatasTable()
     {
         $file = file_get_contents('data/statement.htm');
-        echo $file;
+        //echo $file;
         $dom = new \DOMDocument();
         $dom->loadHTML($file);
 

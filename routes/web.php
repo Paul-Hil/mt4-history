@@ -20,6 +20,9 @@ use App\Http\Controllers\MainController;
 
 Route::get('/', MainController::class)->name('index');
 
+Route::get('/crypto-history', MainController::class)->name('index');
+
+
 Route::get('/trades-by-days/{month}/{year}', [MainController::class, 'tradesByDays'], function($month, $year) {
     return $month;
 })->name('tradesByDays');
