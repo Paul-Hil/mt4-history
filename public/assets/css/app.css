@@ -153,8 +153,8 @@ a, a:hover {
 
 .trades_open, .trades_close {
     background-color: bisque;
-    /* height: 33vh; */
-    height: 52vh;
+    height: 33vh;
+    /* height: 52vh; */
     padding: 10px;
     width: 30vw;
     border-bottom: solid 3px #225662;
@@ -227,3 +227,20 @@ body::-webkit-scrollbar {
     height:50%;
 }
 
+form {
+    width: 50%; 
+    margin: auto;
+    background-color: antiquewhite;
+    border: solid 2px black;
+    border-radius: 20px;
+    margin-top: 150px;
+}
+
+form div {
+    margin: 25px;
+    text-align: center;
+}
+
+form div label {
+    width: 200px;
+}

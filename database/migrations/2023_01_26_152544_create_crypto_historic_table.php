@@ -13,13 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('crypto_historic', function (Blueprint $table) {
+        Schema::create('historic', function (Blueprint $table) {
             $table->id();
             $table->text('name');
-            $table->int('price');
-            $table->int('quantity');
+            $table->integer('price');
+            $table->integer('quantity');
             $table->date('date');
-            $table->text('commentaire')->nullable();
+            $table->text('comment')->nullable();
 
             $table->timestamps();
         });
@@ -32,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('crypto_historic');
+        Schema::dropIfExists('historic');
     }
 };

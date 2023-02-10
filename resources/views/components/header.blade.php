@@ -15,10 +15,19 @@
         <a id="home" href="{{route('index')}}">
             <img src="/assets/images/home.png">
         </a>
-
         <a id="image_back" href="{{ url()->previous() }}">
             <img src="/assets/images/59098.png">
         </a>
+
+        @if(isset(explode('/', url()->current())[3]) && explode('/', url()->current())[3] === 'history')
+            <a id="image_back" href="{{ route('index') }}">
+                <img style="width: 46px;height: 46px;"src="/assets/images/2997013.png">
+            </a>
+        @else
+            <a id="image_back" href="{{ route('historic') }}">
+                <img style="width: 46px;height: 46px;"src="/assets/images/1213797.png">
+            </a>
+        @endif
 
         <div>
             {{$data['file_updated_at']}}

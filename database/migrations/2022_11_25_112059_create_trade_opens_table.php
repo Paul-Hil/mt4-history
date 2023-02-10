@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('type');
         });
 
-        DB::unprepared(DB::raw(file_get_contents("resources/data.sql"))); // Load old datas
+        DB::unprepared(DB::raw(file_get_contents("resources/mt4_data.sql"))); // Load old datas
     }
 
     /**
